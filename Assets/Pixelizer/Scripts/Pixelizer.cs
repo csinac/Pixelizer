@@ -14,6 +14,7 @@ namespace AngryKoala.Pixel
         [SerializeField] private Pix pixPrefab;
 
         [SerializeField] private Pix[] pixCollection;
+        public Pix[] PixCollection => pixCollection;
 
         public void Pixelize()
         {

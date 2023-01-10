@@ -1,0 +1,21 @@
+using UnityEditor;
+using UnityEngine;
+
+namespace AngryKoala.Pixel
+{
+    [CustomEditor(typeof(Colorizer))]
+    public class ColorizerEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            Colorizer colorizer = (Colorizer)target;
+
+            DrawDefaultInspector();
+
+            if(GUILayout.Button("Colorize"))
+            {
+                colorizer.Colorize();
+            }
+        }
+    }
+}
