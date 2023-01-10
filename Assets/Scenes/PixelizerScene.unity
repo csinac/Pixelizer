@@ -330,6 +330,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfd6955e681d114449d9c0043159d36f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  texture: {fileID: 0}
   width: 10
   height: 10
   pixPrefab: {fileID: 8721982140074355113, guid: fcb3e360a487eea4692acf326629d2b5, type: 3}
