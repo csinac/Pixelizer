@@ -9,6 +9,8 @@ namespace AngryKoala.Pixel
         [SerializeField] private int width;
         [SerializeField] private int height;
 
+        [SerializeField] private float pixSize;
+
         [SerializeField] private Pix pixPrefab;
 
         [SerializeField] private Pix[] pixCollection;
@@ -46,7 +48,8 @@ namespace AngryKoala.Pixel
                     Pix pix = Instantiate(pixPrefab, transform);
 
                     pix.gameObject.name = $"Pix[{i},{j}]";
-                    pix.transform.localPosition = new Vector3(-width / 2f + .5f + i, 0f, -height / 2f + .5f + j);
+                    pix.transform.localPosition = new Vector3(-width * pixSize / 2f + pixSize / 2f + i * pixSize, 0f, -height * pixSize / 2f + pixSize / 2f + j * pixSize);
+                    pix.transform.localScale = new Vector3(pixSize, 1f, pixSize);
 
                     pixCollection[pixIndex] = pix;
                     pixIndex++;
@@ -56,12 +59,12 @@ namespace AngryKoala.Pixel
 
         private void SetPixColors()
         {
-            int textureAreaX = texture.width / width;
-            int textureAreaY = texture.height / height;
+            int textureAreaX = Mathf.FloorToInt((float)texture.width / width - 1);
+            int textureAreaY = Mathf.FloorToInt((float)texture.height / height);
 
             for(int i = 0; i < width * height; i++)
             {
-                pixCollection[i].SetColor(GetAverageColor(texture.GetPixels(i / width * textureAreaX, i % width * textureAreaY, textureAreaX, textureAreaY)));
+                pixCollection[i].SetColor(GetAverageColor(texture.GetPixels(i / height * textureAreaX, i % height * textureAreaY, textureAreaX, textureAreaY)));
             }
 
         }

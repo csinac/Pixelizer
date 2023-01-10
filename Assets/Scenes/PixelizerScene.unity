@@ -333,6 +333,7 @@ MonoBehaviour:
   texture: {fileID: 0}
   width: 10
   height: 10
+  pixSize: 1
   pixPrefab: {fileID: 8721982140074355113, guid: fcb3e360a487eea4692acf326629d2b5, type: 3}
   pixCollection: []
 --- !u!4 &1028842579
