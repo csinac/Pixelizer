@@ -26,6 +26,12 @@ namespace AngryKoala.Pixel
                 return;
             }
 
+            if(!texture.isReadable)
+            {
+                Debug.LogError("Texture to pixelize is not readable");
+                return;
+            }
+
             CreateGrid();
 
             SetPixColors();
@@ -33,13 +39,7 @@ namespace AngryKoala.Pixel
 
         private void CreateGrid()
         {
-            if(pixCollection != null)
-            {
-                for(int i = 0; i < pixCollection.Length; i++)
-                {
-                    DestroyImmediate(pixCollection[i].gameObject);
-                }
-            }
+            Clear();
 
             pixCollection = new Pix[width * height];
             int pixIndex = 0;
@@ -90,6 +90,18 @@ namespace AngryKoala.Pixel
             b /= colors.Length;
 
             return new Color(r, g, b);
+        }
+        public void Clear()
+        {
+            if(pixCollection != null)
+            {
+                for(int i = 0; i < pixCollection.Length; i++)
+                {
+                    DestroyImmediate(pixCollection[i].gameObject);
+                }
+            }
+
+            pixCollection = null;
         }
     }
 }

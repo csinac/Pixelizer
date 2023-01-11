@@ -16,6 +16,11 @@ namespace AngryKoala.Pixel
             {
                 pixelizer.Pixelize();
             }
+
+            if(GUILayout.Button("Clear"))
+            {
+                pixelizer.Clear();
+            }
         }
     }
 }
