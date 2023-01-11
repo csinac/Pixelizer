@@ -5,6 +5,7 @@ namespace AngryKoala.Pixelization
     public class Pixelizer : MonoBehaviour
     {
         [SerializeField] private Texture2D texture;
+        public Texture2D Texture => texture;
 
         [SerializeField] private int width;
         public int Width => width;
@@ -39,18 +40,6 @@ namespace AngryKoala.Pixelization
 
         public void Pixelize()
         {
-            if(texture == null)
-            {
-                Debug.LogError("No texture found to pixelize");
-                return;
-            }
-
-            if(!texture.isReadable)
-            {
-                Debug.LogError("Texture to pixelize is not readable");
-                return;
-            }
-
             if(preserveRatio)
             {
                 AdjustGridSize();

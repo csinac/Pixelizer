@@ -14,6 +14,17 @@ namespace AngryKoala.Pixelization
 
             if(GUILayout.Button("Pixelize"))
             {
+                if(pixelizer.Texture == null)
+                {
+                    Debug.LogError("No texture found to pixelize");
+                    return;
+                }
+
+                if(!pixelizer.Texture.isReadable)
+                {
+                    SetTextureReadability(pixelizer.Texture);
+                }
+
                 pixelizer.Pixelize();
             }
 
@@ -21,6 +32,17 @@ namespace AngryKoala.Pixelization
             {
                 pixelizer.Clear();
             }
+        }
+
+        private void SetTextureReadability(Texture2D texture)
+        {
+            TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture));
+
+            importer.textureType = TextureImporterType.Default;
+            importer.isReadable = true;
+
+            EditorUtility.SetDirty(importer);
+            importer.SaveAndReimport();
         }
     }
 }

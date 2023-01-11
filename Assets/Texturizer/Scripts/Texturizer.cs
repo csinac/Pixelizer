@@ -47,6 +47,20 @@ namespace AngryKoala.Pixelization
             File.WriteAllBytes(path, bytes);
 
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+
+            TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
+
+            importer.textureType = TextureImporterType.Default;
+
+            TextureImporterSettings importerSettings = new TextureImporterSettings();
+            importer.ReadTextureSettings(importerSettings);
+
+            importerSettings.npotScale = TextureImporterNPOTScale.None;
+
+            importer.SetTextureSettings(importerSettings);
+
+            EditorUtility.SetDirty(importer);
+            importer.SaveAndReimport();
 #endif
         }
     }
