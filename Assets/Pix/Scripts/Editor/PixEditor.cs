@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace AngryKoala.Pixelization
 {
+    [CanEditMultipleObjects]
     [CustomEditor(typeof(Pix))]
     public class PixEditor : Editor
     {
