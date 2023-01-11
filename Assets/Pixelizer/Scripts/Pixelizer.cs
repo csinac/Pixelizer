@@ -105,7 +105,10 @@ namespace AngryKoala.Pixelization
 
             for(int i = 0; i < width * height; i++)
             {
-                pixCollection[i].SetColor(GetAverageColor(texture.GetPixels(i / height * textureAreaX, i % height * textureAreaY, textureAreaX, textureAreaY)));
+                Color color = GetAverageColor(texture.GetPixels(i / height * textureAreaX, i % height * textureAreaY, textureAreaX, textureAreaY));
+
+                pixCollection[i].OriginalColor = color;
+                pixCollection[i].SetColor(color);
             }
         }
 

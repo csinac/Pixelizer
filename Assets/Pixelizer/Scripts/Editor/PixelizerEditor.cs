@@ -6,9 +6,12 @@ namespace AngryKoala.Pixelization
     [CustomEditor(typeof(Pixelizer))]
     public class PixelizerEditor : Editor
     {
+        private Pixelizer pixelizer;
+
         public override void OnInspectorGUI()
         {
-            Pixelizer pixelizer = (Pixelizer)target;
+            if(pixelizer == null)
+                pixelizer = (Pixelizer)target;
 
             DrawDefaultInspector();
 

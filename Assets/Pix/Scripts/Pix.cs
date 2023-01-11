@@ -8,6 +8,8 @@ namespace AngryKoala.Pixelization
         [SerializeField] private MeshRenderer pixMeshRenderer;
         public MeshRenderer MeshRenderer => pixMeshRenderer;
 
+        [HideInInspector] public Color OriginalColor;
+
         [SerializeField] private Color color;
         public Color Color => color;
 
@@ -15,6 +17,8 @@ namespace AngryKoala.Pixelization
 
         private void Start()
         {
+            color = OriginalColor;
+
             pixMeshRenderer.material.color = color;
             pixMeshRenderer.material.SetFloat("_Glossiness", 0f);
 
@@ -33,6 +37,11 @@ namespace AngryKoala.Pixelization
         public void SetColor(Color color)
         {
             this.color = color;
+        }
+
+        public void ResetColor()
+        {
+            this.color = OriginalColor;
         }
     }
 }

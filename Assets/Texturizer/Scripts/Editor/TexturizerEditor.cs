@@ -6,9 +6,12 @@ namespace AngryKoala.Pixelization
     [CustomEditor(typeof(Texturizer))]
     public class TexturizerEditor : Editor
     {
+        private Texturizer texturizer;
+
         public override void OnInspectorGUI()
         {
-            Texturizer texturizer = (Texturizer)target;
+            if(texturizer == null)
+                texturizer = (Texturizer)target;
 
             DrawDefaultInspector();
 
