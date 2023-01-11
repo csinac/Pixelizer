@@ -380,3 +380,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pixelizer: {fileID: 1028842578}
+  pixSize: 4

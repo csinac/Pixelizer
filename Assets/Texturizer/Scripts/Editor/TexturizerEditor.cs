@@ -14,7 +14,7 @@ namespace AngryKoala.Pixelization
 
             if(GUILayout.Button("Save Texture"))
             {
-                texturizer.SaveTexture();
+                texturizer.SaveTexture(texturizer.PixSize);
             }
         }
     }
