@@ -270,7 +270,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 9
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -335,6 +335,7 @@ MonoBehaviour:
   texture: {fileID: 0}
   width: 10
   height: 10
+  preserveRatio: 0
   pixSize: 1
   pixPrefab: {fileID: 8721982140074355113, guid: fcb3e360a487eea4692acf326629d2b5, type: 3}
   pixCollection: []
@@ -380,4 +381,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pixelizer: {fileID: 1028842578}
-  pixSize: 4
+  pixSize: 1

@@ -11,12 +11,31 @@ namespace AngryKoala.Pixelization
         [SerializeField] private int height;
         public int Height => height;
 
+        [SerializeField] private bool preserveRatio;
+        public bool PreserveRatio => preserveRatio;
+
+        private int previousWidth;
+        private int previousHeight;
+
         [SerializeField] private float pixSize;
 
         [SerializeField] private Pix pixPrefab;
 
         [SerializeField] private Pix[] pixCollection;
         public Pix[] PixCollection => pixCollection;
+
+        private void OnValidate()
+        {
+            width = Mathf.Max(width, 1);
+            height = Mathf.Max(height, 1);
+
+            pixSize = Mathf.Max(pixSize, Mathf.Epsilon);
+
+            if(preserveRatio)
+            {
+                AdjustGridSize();
+            }
+        }
 
         public void Pixelize()
         {
@@ -32,9 +51,39 @@ namespace AngryKoala.Pixelization
                 return;
             }
 
+            if(preserveRatio)
+            {
+                AdjustGridSize();
+            }
+
             CreateGrid();
 
             SetPixColors();
+        }
+
+        public void AdjustGridSize()
+        {
+            if(texture == null)
+            {
+                return;
+            }
+
+            float ratio = (float)texture.width / texture.height;
+
+            if(previousWidth != width)
+            {
+                height = Mathf.FloorToInt(width * (1f / ratio));
+
+                previousWidth = width;
+                previousHeight = height;
+            }
+            else if(previousHeight != height)
+            {
+                width = Mathf.FloorToInt(height * ratio);
+
+                previousWidth = width;
+                previousHeight = height;
+            }
         }
 
         private void CreateGrid()
