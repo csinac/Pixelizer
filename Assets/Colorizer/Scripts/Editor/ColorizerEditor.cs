@@ -32,7 +32,7 @@ namespace AngryKoala.Pixelization
 
             if(GUILayout.Button("Clear"))
             {
-                colorizer.Colors.Clear();
+                colorizer.ColorCollection.Colors.Clear();
             }
         }
     }

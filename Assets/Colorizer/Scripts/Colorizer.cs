@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace AngryKoala.Pixelization
@@ -7,8 +6,8 @@ namespace AngryKoala.Pixelization
     {
         [SerializeField] private Pixelizer pixelizer;
 
-        [SerializeField] private List<Color> colors = new List<Color>();
-        public List<Color> Colors => colors;
+        [SerializeField] private ColorCollection colorCollection;
+        public ColorCollection ColorCollection => colorCollection;
 
         public void Colorize()
         {
@@ -18,7 +17,7 @@ namespace AngryKoala.Pixelization
                 return;
             }
 
-            if(colors.Count == 0)
+            if(colorCollection.Colors.Count == 0)
             {
                 Debug.LogWarning("No colors selected");
                 return;
@@ -38,7 +37,7 @@ namespace AngryKoala.Pixelization
                 return;
             }
 
-            if(colors.Count == 0)
+            if(colorCollection.Colors.Count == 0)
             {
                 Debug.LogWarning("No colors selected");
                 return;
@@ -61,7 +60,7 @@ namespace AngryKoala.Pixelization
 
             Color closestColor = Color.white;
 
-            foreach(var colorizerColor in colors)
+            foreach(var colorizerColor in colorCollection.Colors)
             {
                 Vector3 colorValues = new Vector3(color.r, color.g, color.b);
                 Vector3 colorizerColorValues = new Vector3(colorizerColor.r, colorizerColor.g, colorizerColor.b);
