@@ -69,7 +69,6 @@ namespace AngryKoala.Pixelization
             {
                 pixCollection[i].SetColor(GetAverageColor(texture.GetPixels(i / height * textureAreaX, i % height * textureAreaY, textureAreaX, textureAreaY)));
             }
-
         }
 
         private Color GetAverageColor(Color[] colors)
@@ -91,6 +90,7 @@ namespace AngryKoala.Pixelization
 
             return new Color(r, g, b);
         }
+
         public void Clear()
         {
             if(pixCollection != null)

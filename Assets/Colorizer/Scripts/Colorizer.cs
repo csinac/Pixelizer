@@ -17,6 +17,19 @@ namespace AngryKoala.Pixelization
             }
         }
 
+        public void ColorizeWithBrightness()
+        {
+            for(int i = 0; i < pixelizer.PixCollection.Length; i++)
+            {
+                Color originalColor = pixelizer.PixCollection[i].Color;
+                Color adjustedColor = GetClosestColorizerColor(originalColor);
+
+                float colorBrightness = (originalColor.r + originalColor.g + originalColor.b) / 3f;
+
+                pixelizer.PixCollection[i].SetColor(adjustedColor * colorBrightness);
+            }
+        }
+
         private Color GetClosestColorizerColor(Color color)
         {
             float colorDifference = Mathf.Infinity;
