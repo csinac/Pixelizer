@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace AngryKoala.Pixelization
 {
@@ -17,6 +18,7 @@ namespace AngryKoala.Pixelization
 
         private int previousWidth;
         private int previousHeight;
+        private bool refreshGridSize;
 
         [SerializeField] private float pixSize;
 
@@ -25,6 +27,8 @@ namespace AngryKoala.Pixelization
         [SerializeField] private Pix[] pixCollection;
         public Pix[] PixCollection => pixCollection;
 
+        public static UnityAction<float, float> OnPixelize;
+
         private void OnValidate()
         {
             width = Mathf.Max(width, 1);
@@ -32,9 +36,19 @@ namespace AngryKoala.Pixelization
 
             pixSize = Mathf.Max(pixSize, Mathf.Epsilon);
 
+            refreshGridSize = true;
+
             if(preserveRatio)
             {
                 AdjustGridSize();
+            }
+        }
+
+        private void Start()
+        {
+            if(pixCollection.Length > 0)
+            {
+                OnPixelize?.Invoke(width * pixSize, height * pixSize);
             }
         }
 
@@ -59,12 +73,14 @@ namespace AngryKoala.Pixelization
 
             float ratio = (float)texture.width / texture.height;
 
-            if(previousWidth != width)
+            if(previousWidth != width || refreshGridSize)
             {
                 height = Mathf.FloorToInt(width * (1f / ratio));
 
                 previousWidth = width;
                 previousHeight = height;
+
+                refreshGridSize = false;
             }
             else if(previousHeight != height)
             {
