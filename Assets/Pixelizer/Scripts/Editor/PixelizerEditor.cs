@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace AngryKoala.Pixel
+namespace AngryKoala.Pixelization
 {
     [CustomEditor(typeof(Pixelizer))]
     public class PixelizerEditor : Editor

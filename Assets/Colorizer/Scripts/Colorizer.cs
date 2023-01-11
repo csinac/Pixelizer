@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AngryKoala.Pixel
+namespace AngryKoala.Pixelization
 {
     public class Colorizer : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AngryKoala.Pixel
+namespace AngryKoala.Pixelization
 {
     public class Pixelizer : MonoBehaviour
     {

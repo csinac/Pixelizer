@@ -4,7 +4,7 @@ using UnityEditor;
 #endif
 using UnityEngine;
 
-namespace AngryKoala.Pixel
+namespace AngryKoala.Pixelization
 {
     public class Texturizer : MonoBehaviour
     {
