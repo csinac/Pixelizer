@@ -13,7 +13,7 @@ namespace AngryKoala.Pixelization
         [SerializeField] private int pixSize;
         public int PixSize => pixSize;
 
-        public void SaveTexture(int pixSize)
+        public void Texturize(int pixSize)
         {
             Texture2D newTexture = new Texture2D(pixelizer.Width * pixSize, pixelizer.Height * pixSize, TextureFormat.RGBA32, false);
 

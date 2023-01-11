@@ -12,9 +12,9 @@ namespace AngryKoala.Pixelization
 
             DrawDefaultInspector();
 
-            if(GUILayout.Button("Save Texture"))
+            if(GUILayout.Button("Texturize"))
             {
-                texturizer.SaveTexture(texturizer.PixSize);
+                texturizer.Texturize(texturizer.PixSize);
             }
         }
     }

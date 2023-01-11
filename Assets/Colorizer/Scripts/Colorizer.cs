@@ -7,10 +7,17 @@ namespace AngryKoala.Pixelization
     {
         [SerializeField] private Pixelizer pixelizer;
 
-        [SerializeField] private List<Color> colors;
+        [SerializeField] private List<Color> colors = new List<Color>();
+        public List<Color> Colors => colors;
 
         public void Colorize()
         {
+            if(colors.Count == 0)
+            {
+                Debug.LogWarning("No colors selected");
+                return;
+            }
+
             for(int i = 0; i < pixelizer.PixCollection.Length; i++)
             {
                 pixelizer.PixCollection[i].SetColor(GetClosestColorizerColor(pixelizer.PixCollection[i].Color));
@@ -19,6 +26,12 @@ namespace AngryKoala.Pixelization
 
         public void ColorizeWithBrightness()
         {
+            if(colors.Count == 0)
+            {
+                Debug.LogWarning("No colors selected");
+                return;
+            }
+
             for(int i = 0; i < pixelizer.PixCollection.Length; i++)
             {
                 Color originalColor = pixelizer.PixCollection[i].Color;
