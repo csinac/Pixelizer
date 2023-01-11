@@ -16,7 +16,7 @@ namespace AngryKoala.Pixelization
             {
                 if(pixelizer.Texture == null)
                 {
-                    Debug.LogError("No texture found to pixelize");
+                    Debug.LogWarning("No texture found to pixelize");
                     return;
                 }
 

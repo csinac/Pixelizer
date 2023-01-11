@@ -12,6 +12,12 @@ namespace AngryKoala.Pixelization
 
         public void Colorize()
         {
+            if(pixelizer.PixCollection.Length == 0)
+            {
+                Debug.LogWarning("Pixelize a texture first");
+                return;
+            }
+
             if(colors.Count == 0)
             {
                 Debug.LogWarning("No colors selected");
@@ -26,6 +32,12 @@ namespace AngryKoala.Pixelization
 
         public void ColorizeWithBrightness()
         {
+            if(pixelizer.PixCollection.Length == 0)
+            {
+                Debug.LogWarning("Pixelize a texture first");
+                return;
+            }
+
             if(colors.Count == 0)
             {
                 Debug.LogWarning("No colors selected");

@@ -15,6 +15,12 @@ namespace AngryKoala.Pixelization
 
         public void Texturize(int pixSize)
         {
+            if(pixelizer.PixCollection.Length == 0)
+            {
+                Debug.LogError("Pixelize a texture first");
+                return;
+            }
+
             Texture2D newTexture = new Texture2D(pixelizer.Width * pixSize, pixelizer.Height * pixSize, TextureFormat.RGBA32, false);
 
             int pixIndex = 0;
