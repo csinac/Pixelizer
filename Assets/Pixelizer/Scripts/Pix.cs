@@ -18,6 +18,7 @@ namespace AngryKoala.Pixel
         private void Start()
         {
             pixMeshRenderer.material.color = color;
+            pixMeshRenderer.material.SetFloat("_Glossiness", 0f);
         }
     }
 }

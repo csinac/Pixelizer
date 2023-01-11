@@ -7,7 +7,9 @@ namespace AngryKoala.Pixel
         [SerializeField] private Texture2D texture;
 
         [SerializeField] private int width;
+        public int Width => width;
         [SerializeField] private int height;
+        public int Height => height;
 
         [SerializeField] private float pixSize;
 
