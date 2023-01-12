@@ -15,6 +15,17 @@ namespace AngryKoala.Pixelization
 
         private Color currentColor;
 
+        [SerializeField][Range(0f, 1f)] private float hue;
+
+        [SerializeField][Range(0f, 1f)] private float saturation;
+
+        [SerializeField][Range(0f, 1f)] private float brightness;
+
+        private void OnValidate()
+        {
+            color = Color.HSVToRGB(hue, saturation, brightness);
+        }
+
         private void Start()
         {
             color = OriginalColor;
@@ -37,11 +48,15 @@ namespace AngryKoala.Pixelization
         public void SetColor(Color color)
         {
             this.color = color;
+
+            Color.RGBToHSV(color, out hue, out saturation, out brightness);
         }
 
         public void ResetColor()
         {
-            this.color = OriginalColor;
+            color = OriginalColor;
+
+            Color.RGBToHSV(color, out hue, out saturation, out brightness);
         }
     }
 }
