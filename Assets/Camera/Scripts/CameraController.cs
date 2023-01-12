@@ -18,7 +18,7 @@ namespace AngryKoala.Pixelization
 
         public void SetCameraSize(float width, float height)
         {
-            if(width >= height)
+            if(width / height >= mainCamera.aspect)
             {
                 mainCamera.orthographicSize = width / (2 * mainCamera.aspect);
             }
