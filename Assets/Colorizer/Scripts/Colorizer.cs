@@ -9,6 +9,8 @@ namespace AngryKoala.Pixelization
         [SerializeField] private ColorCollection colorCollection;
         public ColorCollection ColorCollection => colorCollection;
 
+        [SerializeField] private bool useOriginalColorValues;
+
         public void Colorize()
         {
             if(pixelizer.PixCollection.Length == 0)
@@ -22,35 +24,22 @@ namespace AngryKoala.Pixelization
                 Debug.LogWarning("No colors selected");
                 return;
             }
-
+            
             for(int i = 0; i < pixelizer.PixCollection.Length; i++)
             {
-                pixelizer.PixCollection[i].SetColor(GetClosestColorizerColor(pixelizer.PixCollection[i].Color));
-            }
-        }
+                if(useOriginalColorValues)
+                {
+                    Color originalColor = pixelizer.PixCollection[i].Color;
+                    Color adjustedColor = GetClosestColorizerColor(originalColor);
 
-        public void ColorizeWithBrightness()
-        {
-            if(pixelizer.PixCollection.Length == 0)
-            {
-                Debug.LogWarning("Pixelize a texture first");
-                return;
-            }
+                    float colorBrightness = (originalColor.r + originalColor.g + originalColor.b) / 3f;
 
-            if(colorCollection.Colors.Count == 0)
-            {
-                Debug.LogWarning("No colors selected");
-                return;
-            }
-
-            for(int i = 0; i < pixelizer.PixCollection.Length; i++)
-            {
-                Color originalColor = pixelizer.PixCollection[i].Color;
-                Color adjustedColor = GetClosestColorizerColor(originalColor);
-
-                float colorBrightness = (originalColor.r + originalColor.g + originalColor.b) / 3f;
-
-                pixelizer.PixCollection[i].SetColor(adjustedColor * colorBrightness);
+                    pixelizer.PixCollection[i].SetColor(adjustedColor * colorBrightness);
+                }
+                else
+                {
+                    pixelizer.PixCollection[i].SetColor(GetClosestColorizerColor(pixelizer.PixCollection[i].Color));
+                }
             }
         }
 

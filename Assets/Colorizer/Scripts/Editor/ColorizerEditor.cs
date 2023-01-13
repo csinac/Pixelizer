@@ -20,11 +20,6 @@ namespace AngryKoala.Pixelization
                 colorizer.Colorize();
             }
 
-            if(GUILayout.Button("Colorize With Brigtness"))
-            {
-                colorizer.ColorizeWithBrightness();
-            }
-
             if(GUILayout.Button("Clear Color Collection"))
             {
                 colorizer.ColorCollection.Colors.Clear();
