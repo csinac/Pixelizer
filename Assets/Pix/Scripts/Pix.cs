@@ -1,8 +1,8 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace AngryKoala.Pixelization
 {
-    [SelectionBase]
     public class Pix : MonoBehaviour
     {
         [SerializeField] private MeshRenderer pixMeshRenderer;
@@ -15,16 +15,11 @@ namespace AngryKoala.Pixelization
 
         private Color currentColor;
 
-        [SerializeField][Range(0f, 1f)] private float hue;
+        [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float hue;
 
-        [SerializeField][Range(0f, 1f)] private float saturation;
+        [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float saturation;
 
-        [SerializeField][Range(0f, 1f)] private float brightness;
-
-        private void OnValidate()
-        {
-            color = Color.HSVToRGB(hue, saturation, brightness);
-        }
+        [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float brightness;
 
         private void Start()
         {
@@ -58,5 +53,39 @@ namespace AngryKoala.Pixelization
 
             Color.RGBToHSV(color, out hue, out saturation, out brightness);
         }
+
+        public void ComplementColor()
+        {
+            float maxValue = 0f;
+            float minValue = 1f;
+
+            for(int i = 0; i < 3; i++)
+            {
+                if(color[i] >= maxValue)
+                {
+                    maxValue = color[i];
+                }
+                if(color[i] <= minValue)
+                {
+                    minValue = color[i];
+                }
+            }
+
+            color = new Color(maxValue + minValue - color.r, maxValue + minValue - color.g, maxValue + minValue - color.b);
+        }
+
+        public void InvertColor()
+        {
+            color = new Color(1 - color.r, 1 - color.g, 1 - color.b);
+        }
+
+        #region Validation
+
+        private void OnHSVChanged()
+        {
+            color = Color.HSVToRGB(hue, saturation, brightness);
+        }
+
+        #endregion
     }
 }

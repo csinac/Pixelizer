@@ -1,3 +1,4 @@
+using NaughtyAttributes.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -5,20 +6,43 @@ namespace AngryKoala.Pixelization
 {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(Pix))]
-    public class PixEditor : Editor
+    public class PixEditor : NaughtyInspector
     {
-        private Pix pix;
-
         public override void OnInspectorGUI()
         {
-            if(pix == null)
-                pix = (Pix)target;
+            base.OnInspectorGUI();
 
-            DrawDefaultInspector();
+            if(GUILayout.Button("Complement Color"))
+            {
+                foreach(var item in Selection.gameObjects)
+                {
+                    if(item.TryGetComponent(out Pix pix))
+                    {
+                        pix.ComplementColor();
+                    }
+                }
+            }
+
+            if(GUILayout.Button("Invert Color"))
+            {
+                foreach(var item in Selection.gameObjects)
+                {
+                    if(item.TryGetComponent(out Pix pix))
+                    {
+                        pix.InvertColor();
+                    }
+                }
+            }
 
             if(GUILayout.Button("Reset Color"))
             {
-                pix.ResetColor();
+                foreach(var item in Selection.gameObjects)
+                {
+                    if(item.TryGetComponent(out Pix pix))
+                    {
+                        pix.ResetColor();
+                    }
+                }
             }
         }
     }
