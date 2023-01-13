@@ -8,12 +8,12 @@ namespace AngryKoala.Pixelization
 
         private void OnEnable()
         {
-            Pixelizer.OnPixelize += SetCameraSize;
+            Pixelizer.OnGridSizeUpdated += SetCameraSize;
         }
 
         private void OnDisable()
         {
-            Pixelizer.OnPixelize -= SetCameraSize;
+            Pixelizer.OnGridSizeUpdated -= SetCameraSize;
         }
 
         public void SetCameraSize(float width, float height)

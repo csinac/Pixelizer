@@ -10,8 +10,10 @@ namespace AngryKoala.Pixelization
         public Texture2D Texture => texture;
 
         [SerializeField][OnValueChanged("OnWidthChanged")] private int width;
+        [SerializeField][HideInInspector] private int currentWidth;
         public int Width => width;
         [SerializeField][OnValueChanged("OnHeightChanged")] private int height;
+        [SerializeField][HideInInspector] private int currentHeight;
         public int Height => height;
 
         [SerializeField][OnValueChanged("PreserveRatio")] private bool preserveRatio;
@@ -23,19 +25,19 @@ namespace AngryKoala.Pixelization
         [SerializeField] private Pix[] pixCollection;
         public Pix[] PixCollection => pixCollection;
 
-        public static UnityAction<float, float> OnPixelize;
+        public static UnityAction<float, float> OnGridSizeUpdated;
 
         private void Start()
         {
             if(pixCollection.Length > 0)
             {
-                OnPixelize?.Invoke(width * pixSize, height * pixSize);
+                OnGridSizeUpdated?.Invoke(currentWidth * pixSize, currentHeight * pixSize);
             }
         }
 
         private void Update()
         {
-            OnPixelize?.Invoke(width * pixSize, height * pixSize);
+            OnGridSizeUpdated?.Invoke(currentWidth * pixSize, currentHeight * pixSize);
         }
 
         public void Pixelize()
@@ -44,12 +46,15 @@ namespace AngryKoala.Pixelization
 
             SetPixColors();
 
-            OnPixelize?.Invoke(width * pixSize, height * pixSize);
+            OnGridSizeUpdated?.Invoke(currentWidth * pixSize, currentHeight * pixSize);
         }
 
         private void CreateGrid()
         {
             Clear();
+
+            currentWidth = width;
+            currentHeight = height;
 
             pixCollection = new Pix[width * height];
             int pixIndex = 0;
