@@ -42,12 +42,12 @@ namespace AngryKoala.Pixelization
             }
 
 #if UNITY_EDITOR
-            if(!AssetDatabase.IsValidFolder("Assets/Texturizer/Textures"))
+            if(!AssetDatabase.IsValidFolder("Assets/Pixelizer/Texturizer/Textures"))
             {
-                AssetDatabase.CreateFolder("Assets/Texturizer", "Textures");
+                AssetDatabase.CreateFolder("Assets/Pixelizer/Texturizer", "Textures");
             }
 
-            string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Texturizer/Textures/Texture.png");
+            string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Pixelizer/Texturizer/Textures/Texture.png");
 
             byte[] bytes = newTexture.EncodeToPNG();
             File.WriteAllBytes(path, bytes);
