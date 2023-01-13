@@ -77,6 +77,22 @@ namespace AngryKoala.Pixelization
             return closestColor;
         }
 
+        public void ComplementColors()
+        {
+            foreach(var pix in pixelizer.PixCollection)
+            {
+                pix.ComplementColor();
+            }
+        }
+
+        public void InvertColors()
+        {
+            foreach(var pix in pixelizer.PixCollection)
+            {
+                pix.InvertColor();
+            }
+        }
+
         public void ResetColors()
         {
             foreach(var pix in pixelizer.PixCollection)

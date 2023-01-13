@@ -25,14 +25,24 @@ namespace AngryKoala.Pixelization
                 colorizer.ColorizeWithBrightness();
             }
 
+            if(GUILayout.Button("Clear Color Collection"))
+            {
+                colorizer.ColorCollection.Colors.Clear();
+            }
+
+            if(GUILayout.Button("Complement Colors"))
+            {
+                colorizer.ComplementColors();
+            }
+
+            if(GUILayout.Button("Invert Colors"))
+            {
+                colorizer.InvertColors();
+            }
+
             if(GUILayout.Button("Reset Colors"))
             {
                 colorizer.ResetColors();
-            }
-
-            if(GUILayout.Button("Clear"))
-            {
-                colorizer.ColorCollection.Colors.Clear();
             }
         }
     }

@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -5,20 +6,15 @@ namespace AngryKoala.Pixelization
 {
     public class Pixelizer : MonoBehaviour
     {
-        [SerializeField] private Texture2D texture;
+        [SerializeField][OnValueChanged("PreserveRatio")] private Texture2D texture;
         public Texture2D Texture => texture;
 
-        [SerializeField] private int width;
+        [SerializeField][OnValueChanged("OnWidthChanged")] private int width;
         public int Width => width;
-        [SerializeField] private int height;
+        [SerializeField][OnValueChanged("OnHeightChanged")] private int height;
         public int Height => height;
 
-        [SerializeField] private bool preserveRatio;
-        public bool PreserveRatio => preserveRatio;
-
-        private int previousWidth;
-        private int previousHeight;
-        private bool refreshGridSize;
+        [SerializeField][OnValueChanged("PreserveRatio")] private bool preserveRatio;
 
         [SerializeField] private float pixSize;
 
@@ -29,21 +25,6 @@ namespace AngryKoala.Pixelization
 
         public static UnityAction<float, float> OnPixelize;
 
-        private void OnValidate()
-        {
-            width = Mathf.Max(width, 1);
-            height = Mathf.Max(height, 1);
-
-            pixSize = Mathf.Max(pixSize, Mathf.Epsilon);
-
-            refreshGridSize = true;
-
-            if(preserveRatio)
-            {
-                AdjustGridSize();
-            }
-        }
-
         private void Start()
         {
             if(pixCollection.Length > 0)
@@ -52,43 +33,18 @@ namespace AngryKoala.Pixelization
             }
         }
 
+        private void Update()
+        {
+            OnPixelize?.Invoke(width * pixSize, height * pixSize);
+        }
+
         public void Pixelize()
         {
-            if(preserveRatio)
-            {
-                AdjustGridSize();
-            }
-
             CreateGrid();
 
             SetPixColors();
-        }
 
-        public void AdjustGridSize()
-        {
-            if(texture == null)
-            {
-                return;
-            }
-
-            float ratio = (float)texture.width / texture.height;
-
-            if(previousWidth != width || refreshGridSize)
-            {
-                height = Mathf.FloorToInt(width * (1f / ratio));
-
-                previousWidth = width;
-                previousHeight = height;
-
-                refreshGridSize = false;
-            }
-            else if(previousHeight != height)
-            {
-                width = Mathf.FloorToInt(height * ratio);
-
-                previousWidth = width;
-                previousHeight = height;
-            }
+            OnPixelize?.Invoke(width * pixSize, height * pixSize);
         }
 
         private void CreateGrid()
@@ -106,6 +62,7 @@ namespace AngryKoala.Pixelization
 
                     pix.gameObject.name = $"Pix[{i},{j}]";
                     pix.transform.localPosition = new Vector3(-width * pixSize / 2f + pixSize / 2f + i * pixSize, 0f, -height * pixSize / 2f + pixSize / 2f + j * pixSize);
+                    pix.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
                     pix.transform.localScale = new Vector3(pixSize, 1f, pixSize);
 
                     pixCollection[pixIndex] = pix;
@@ -160,5 +117,62 @@ namespace AngryKoala.Pixelization
 
             pixCollection = null;
         }
+
+        #region Validation
+
+        private void OnValidate()
+        {
+            pixSize = Mathf.Max(pixSize, Mathf.Epsilon);
+        }
+
+        private void OnWidthChanged()
+        {
+            width = Mathf.Max(width, 1);
+
+            if(texture == null)
+            {
+                return;
+            }
+
+            if(preserveRatio)
+            {
+                float ratio = (float)texture.width / texture.height;
+
+                height = Mathf.FloorToInt(width * (1f / ratio));
+                height = Mathf.Max(height, 1);
+            }
+        }
+
+        private void OnHeightChanged()
+        {
+            height = Mathf.Max(height, 1);
+
+            if(texture == null)
+            {
+                return;
+            }
+
+            if(preserveRatio)
+            {
+                float ratio = (float)texture.width / texture.height;
+
+                width = Mathf.FloorToInt(height * ratio);
+                width = Mathf.Max(width, 1);
+            }
+        }
+
+        private void PreserveRatio()
+        {
+            if(width >= height)
+            {
+                OnWidthChanged();
+            }
+            else
+            {
+                OnHeightChanged();
+            }
+        }
+
+        #endregion
     }
 }

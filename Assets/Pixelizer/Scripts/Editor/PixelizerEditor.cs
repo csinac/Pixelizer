@@ -1,19 +1,20 @@
+using NaughtyAttributes.Editor;
 using UnityEditor;
 using UnityEngine;
 
 namespace AngryKoala.Pixelization
 {
     [CustomEditor(typeof(Pixelizer))]
-    public class PixelizerEditor : Editor
+    public class PixelizerEditor : NaughtyInspector
     {
         private Pixelizer pixelizer;
 
         public override void OnInspectorGUI()
         {
+            base.OnInspectorGUI();
+
             if(pixelizer == null)
                 pixelizer = (Pixelizer)target;
-
-            DrawDefaultInspector();
 
             if(GUILayout.Button("Pixelize"))
             {
@@ -31,7 +32,7 @@ namespace AngryKoala.Pixelization
                 pixelizer.Pixelize();
             }
 
-            if(GUILayout.Button("Clear"))
+            if(GUILayout.Button("Clear Pix Collection"))
             {
                 pixelizer.Clear();
             }
