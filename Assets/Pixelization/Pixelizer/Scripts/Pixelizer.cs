@@ -78,12 +78,12 @@ namespace AngryKoala.Pixelization
 
         private void SetPixColors()
         {
-            int textureAreaX = Mathf.FloorToInt((float)texture.width / width - 1);
-            int textureAreaY = Mathf.FloorToInt((float)texture.height / height);
+            float textureAreaX = (float)texture.width / width;
+            float textureAreaY = (float)texture.height / height;
 
             for(int i = 0; i < width * height; i++)
             {
-                Color color = GetAverageColor(texture.GetPixels(i / height * textureAreaX, i % height * textureAreaY, textureAreaX, textureAreaY));
+                Color color = GetAverageColor(texture.GetPixels(Mathf.FloorToInt((i / height) * textureAreaX), Mathf.FloorToInt(i % height * textureAreaY), Mathf.FloorToInt(textureAreaX), Mathf.FloorToInt(textureAreaY)));
 
                 pixCollection[i].OriginalColor = color;
                 pixCollection[i].SetColor(color);
