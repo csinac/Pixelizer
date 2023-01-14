@@ -384,7 +384,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pixelizer: {fileID: 1028842578}
   colorCollection: {fileID: 11400000, guid: fd46d878d7f44774bad3fc097d9e76af, type: 2}
-  useOriginalColorValues: 0
+  colorizationStyle: 0
+  extractColorPaletteColorCount: 0
 --- !u!114 &1028842581
 MonoBehaviour:
   m_ObjectHideFlags: 0

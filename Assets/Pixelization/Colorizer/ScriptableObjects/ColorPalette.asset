@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 895fc94d95bd89145bbd0eb6707ac53e, type: 3}
-  m_Name: ColorCollection
+  m_Name: ColorPalette
   m_EditorClassIdentifier: 
   colors: []

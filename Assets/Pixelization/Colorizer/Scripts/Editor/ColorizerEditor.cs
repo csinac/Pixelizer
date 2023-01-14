@@ -20,6 +20,11 @@ namespace AngryKoala.Pixelization
                 colorizer.Colorize();
             }
 
+            if(GUILayout.Button("Extract Color Palette"))
+            {
+                colorizer.ExtractColorPalette();
+            }
+
             if(GUILayout.Button("Clear Color Collection"))
             {
                 colorizer.ColorCollection.Colors.Clear();

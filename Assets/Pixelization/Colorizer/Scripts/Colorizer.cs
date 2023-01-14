@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace AngryKoala.Pixelization
@@ -6,10 +8,13 @@ namespace AngryKoala.Pixelization
     {
         [SerializeField] private Pixelizer pixelizer;
 
-        [SerializeField] private ColorCollection colorCollection;
-        public ColorCollection ColorCollection => colorCollection;
+        [SerializeField] private ColorPalette colorCollection;
+        public ColorPalette ColorCollection => colorCollection;
 
-        [SerializeField] private bool useOriginalColorValues;
+        private enum ColorizationStyle { Replace, ReplaceWithOriginalBrightness }
+        [SerializeField] private ColorizationStyle colorizationStyle;
+
+        [SerializeField] private int extractColorPaletteColorCount;
 
         public void Colorize()
         {
@@ -24,10 +29,14 @@ namespace AngryKoala.Pixelization
                 Debug.LogWarning("No colors selected");
                 return;
             }
-            
+
             for(int i = 0; i < pixelizer.PixCollection.Length; i++)
             {
-                if(useOriginalColorValues)
+                if(colorizationStyle == ColorizationStyle.Replace)
+                {
+                    pixelizer.PixCollection[i].SetColor(GetClosestColorizerColor(pixelizer.PixCollection[i].Color));
+                }
+                if(colorizationStyle == ColorizationStyle.ReplaceWithOriginalBrightness)
                 {
                     Color originalColor = pixelizer.PixCollection[i].Color;
                     Color adjustedColor = GetClosestColorizerColor(originalColor);
@@ -35,10 +44,6 @@ namespace AngryKoala.Pixelization
                     float colorBrightness = (originalColor.r + originalColor.g + originalColor.b) / 3f;
 
                     pixelizer.PixCollection[i].SetColor(adjustedColor * colorBrightness);
-                }
-                else
-                {
-                    pixelizer.PixCollection[i].SetColor(GetClosestColorizerColor(pixelizer.PixCollection[i].Color));
                 }
             }
         }
@@ -64,6 +69,68 @@ namespace AngryKoala.Pixelization
             }
 
             return closestColor;
+        }
+
+        public void ExtractColorPalette()
+        {
+            int iterationCount = 10;
+
+            List<Color> pixels = new List<Color>();
+            foreach(var pix in pixelizer.PixCollection)
+            {
+                pixels.Add(pix.Color);
+            }
+            int pixelCount = pixels.Count;
+
+            Color[] centroids = new Color[extractColorPaletteColorCount];
+            for(int i = 0; i < extractColorPaletteColorCount; i++)
+            {
+                centroids[i] = pixels[Random.Range(0, pixelCount)];
+            }
+
+            for(int i = 0; i < iterationCount; i++)
+            {
+                int[] nearestCentroidIndices = new int[pixelCount];
+
+                for(int j = 0; j < pixelCount; j++)
+                {
+                    float nearestDistance = float.MaxValue;
+                    int nearestCentroidIndex = 0;
+                    for(int k = 0; k < extractColorPaletteColorCount; k++)
+                    {
+                        Vector3 colorA = new Vector3(pixels[j].r, pixels[j].g, pixels[j].b);
+                        Vector3 colorB = new Vector3(centroids[k].r, centroids[k].g, centroids[k].b);
+
+                        float distance = Vector3.Distance(colorA, colorB);
+                        if(distance < nearestDistance)
+                        {
+                            nearestDistance = distance;
+                            nearestCentroidIndex = k;
+                        }
+                    }
+                    nearestCentroidIndices[j] = nearestCentroidIndex;
+                }
+
+                for(int j = 0; j < extractColorPaletteColorCount; j++)
+                {
+                    var pixelsInCluster =
+                        from pixelIndex in Enumerable.Range(0, pixelCount)
+                        where nearestCentroidIndices[pixelIndex] == j
+                        select pixels[pixelIndex];
+
+                    if(pixelsInCluster.Any())
+                    {
+                        centroids[j] = new Color(pixelsInCluster.Average(c => c.r), pixelsInCluster.Average(c => c.g), pixelsInCluster.Average(c => c.b));
+                    }
+                }
+            }
+
+            colorCollection.Colors.Clear();
+
+            foreach(var centroid in centroids)
+            {
+                colorCollection.Colors.Add(centroid);
+            }
         }
 
         public void ComplementColors()

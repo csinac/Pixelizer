@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace AngryKoala.Pixelization
 {
-    [CreateAssetMenu(fileName = "ColorCollection", menuName = "AngryKoala/Colorizer/ColorCollection")]
-    public class ColorCollection : ScriptableObject
+    [CreateAssetMenu(fileName = "ColorPalette", menuName = "AngryKoala/Colorizer/ColorPalette")]
+    public class ColorPalette : ScriptableObject
     {
         [SerializeField] private List<Color> colors = new List<Color>();
         public List<Color> Colors => colors;
