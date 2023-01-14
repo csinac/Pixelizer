@@ -14,6 +14,9 @@ namespace AngryKoala.Pixelization
         private enum ColorizationStyle { Replace, ReplaceWithOriginalBrightness }
         [SerializeField] private ColorizationStyle colorizationStyle;
 
+        private enum ReplacementStyle { ReplaceUsingColor, ReplaceUsingBrightness }
+        [SerializeField] private ReplacementStyle replacementStyle;
+
         [SerializeField] private int extractColorPaletteColorCount;
 
         public void Colorize()
@@ -54,17 +57,36 @@ namespace AngryKoala.Pixelization
 
             Color closestColor = Color.white;
 
-            foreach(var colorizerColor in colorCollection.Colors)
+            if(replacementStyle == ReplacementStyle.ReplaceUsingColor)
             {
-                Vector3 colorValues = new Vector3(color.r, color.g, color.b);
-                Vector3 colorizerColorValues = new Vector3(colorizerColor.r, colorizerColor.g, colorizerColor.b);
-
-                float difference = Vector3.Distance(colorValues, colorizerColorValues);
-
-                if(difference < colorDifference)
+                foreach(var colorizerColor in colorCollection.Colors)
                 {
-                    closestColor = colorizerColor;
-                    colorDifference = difference;
+                    Vector3 colorValues = new Vector3(color.r, color.g, color.b);
+                    Vector3 colorizerColorValues = new Vector3(colorizerColor.r, colorizerColor.g, colorizerColor.b);
+
+                    float difference = Vector3.Distance(colorValues, colorizerColorValues);
+
+                    if(difference < colorDifference)
+                    {
+                        closestColor = colorizerColor;
+                        colorDifference = difference;
+                    }
+                }
+            }
+            if(replacementStyle == ReplacementStyle.ReplaceUsingBrightness)
+            {
+                foreach(var colorizerColor in colorCollection.Colors)
+                {
+                    float colorValue = (color.r + color.g + color.b) / 3f;
+                    float colorizerColorValue = (colorizerColor.r + colorizerColor.g + colorizerColor.b) / 3f;
+
+                    float difference = Mathf.Abs(colorValue - colorizerColorValue);
+
+                    if(difference < colorDifference)
+                    {
+                        closestColor = colorizerColor;
+                        colorDifference = difference;
+                    }
                 }
             }
 
