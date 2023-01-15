@@ -347,6 +347,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   texture: {fileID: 0}
+  originalWidth: 1536
+  originalHeight: 2048
   width: 10
   currentWidth: 30
   height: 10
@@ -385,6 +387,7 @@ MonoBehaviour:
   pixelizer: {fileID: 1028842578}
   colorCollection: {fileID: 11400000, guid: fd46d878d7f44774bad3fc097d9e76af, type: 2}
   colorizationStyle: 0
+  replacementStyle: 0
   extractColorPaletteColorCount: 0
 --- !u!114 &1028842581
 MonoBehaviour:
@@ -399,4 +402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pixelizer: {fileID: 1028842578}
+  texturizationStyle: 0
   pixSize: 1
+  width: 1
+  height: 1

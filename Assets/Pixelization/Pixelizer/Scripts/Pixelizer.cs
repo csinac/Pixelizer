@@ -9,6 +9,11 @@ namespace AngryKoala.Pixelization
         [SerializeField][OnValueChanged("PreserveRatio")] private Texture2D texture;
         public Texture2D Texture => texture;
 
+        private bool showOriginalDimensions => texture != null;
+
+        [SerializeField][ReadOnly][ShowIf("showOriginalDimensions")] private int originalWidth;
+        [SerializeField][ReadOnly][ShowIf("showOriginalDimensions")] private int originalHeight;
+
         [SerializeField][OnValueChanged("OnWidthChanged")] private int width;
         [SerializeField][HideInInspector] private int currentWidth;
         public int Width => width;
@@ -128,6 +133,9 @@ namespace AngryKoala.Pixelization
         private void OnValidate()
         {
             pixSize = Mathf.Max(pixSize, Mathf.Epsilon);
+
+            originalWidth = texture != null ? texture.width : 0;
+            originalHeight = texture != null ? texture.height : 0;
         }
 
         private void OnWidthChanged()
