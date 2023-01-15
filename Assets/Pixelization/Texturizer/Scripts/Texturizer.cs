@@ -1,4 +1,5 @@
 using System.IO;
+using NaughtyAttributes;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -10,10 +11,21 @@ namespace AngryKoala.Pixelization
     {
         [SerializeField] private Pixelizer pixelizer;
 
-        [SerializeField] private int pixSize;
-        public int PixSize => pixSize;
+        private enum TexturizationStyle { PixelizerSize, CustomSize }
+        [SerializeField] private TexturizationStyle texturizationStyle;
 
-        public void Texturize(int pixSize)
+        [SerializeField][ShowIf("texturizationStyle", TexturizationStyle.PixelizerSize)] private int pixSize;
+
+        [SerializeField][ShowIf("texturizationStyle", TexturizationStyle.CustomSize)] private int width;
+        [SerializeField][ShowIf("texturizationStyle", TexturizationStyle.CustomSize)] private int height;
+
+        private void OnValidate()
+        {
+            width = Mathf.Max(width, 1);
+            height = Mathf.Max(height, 1);
+        }
+
+        public void Texturize()
         {
             if(pixelizer.PixCollection.Length == 0)
             {
@@ -21,33 +33,74 @@ namespace AngryKoala.Pixelization
                 return;
             }
 
-            Texture2D newTexture = new Texture2D(pixelizer.Width * pixSize, pixelizer.Height * pixSize, TextureFormat.RGBA32, false);
+            Texture2D newTexture = null;
 
-            int pixIndex = 0;
-
-            for(int i = 0; i < pixelizer.Width; i++)
+            if(texturizationStyle == TexturizationStyle.PixelizerSize)
             {
-                for(int j = 0; j < pixelizer.Height; j++)
+                newTexture = new Texture2D(pixelizer.Width * pixSize, pixelizer.Height * pixSize, TextureFormat.RGBA32, false);
+
+                int pixIndex = 0;
+
+                for(int i = 0; i < pixelizer.Width; i++)
                 {
-                    Color[] pixColor = new Color[pixSize * pixSize];
-
-                    for(int k = 0; k < pixColor.Length; k++)
+                    for(int j = 0; j < pixelizer.Height; j++)
                     {
-                        pixColor[k] = pixelizer.PixCollection[pixIndex].Color;
-                    }
+                        Color[] pixColor = new Color[pixSize * pixSize];
 
-                    newTexture.SetPixels(i * pixSize, j * pixSize, pixSize, pixSize, pixColor);
-                    pixIndex++;
+                        for(int k = 0; k < pixColor.Length; k++)
+                        {
+                            pixColor[k] = pixelizer.PixCollection[pixIndex].Color;
+                        }
+
+                        newTexture.SetPixels(i * pixSize, j * pixSize, pixSize, pixSize, pixColor);
+                        pixIndex++;
+                    }
                 }
+            }
+            if(texturizationStyle == TexturizationStyle.CustomSize)
+            {
+                newTexture = new Texture2D(pixelizer.Width, pixelizer.Height, TextureFormat.RGBA32, false);
+
+                int pixIndex = 0;
+
+                for(int i = 0; i < pixelizer.Width; i++)
+                {
+                    for(int j = 0; j < pixelizer.Height; j++)
+                    {
+                        Color[] pixColor = new Color[1];
+
+                        for(int k = 0; k < pixColor.Length; k++)
+                        {
+                            pixColor[k] = pixelizer.PixCollection[pixIndex].Color;
+                        }
+
+                        newTexture.SetPixels(i, j, 1, 1, pixColor);
+                        pixIndex++;
+                    }
+                }
+
+                Texture2D scaledTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+                newTexture.wrapMode = TextureWrapMode.Clamp;
+
+                for(int i = 0; i < width; i++)
+                {
+                    for(int j = 0; j < height; j++)
+                    {
+                        Color color = newTexture.GetPixelBilinear((float)i / width, (float)j / height);
+                        scaledTexture.SetPixel(i, j, color);
+                    }
+                }
+
+                newTexture = scaledTexture;
             }
 
 #if UNITY_EDITOR
-            if(!AssetDatabase.IsValidFolder("Assets/Pixelizer/Texturizer/Textures"))
+            if(!AssetDatabase.IsValidFolder("Assets/Pixelization/Texturizer/Textures"))
             {
-                AssetDatabase.CreateFolder("Assets/Pixelizer/Texturizer", "Textures");
+                AssetDatabase.CreateFolder("Assets/Pixelization/Texturizer", "Textures");
             }
 
-            string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Pixelizer/Texturizer/Textures/Texture.png");
+            string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Pixelization/Texturizer/Textures/Texture.png");
 
             byte[] bytes = newTexture.EncodeToPNG();
             File.WriteAllBytes(path, bytes);
