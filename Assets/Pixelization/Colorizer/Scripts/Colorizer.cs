@@ -153,6 +153,10 @@ namespace AngryKoala.Pixelization
             {
                 colorCollection.Colors.Add(centroid);
             }
+
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(colorCollection);
+#endif
         }
 
         public void ComplementColors()
