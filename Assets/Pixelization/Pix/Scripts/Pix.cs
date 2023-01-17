@@ -10,7 +10,7 @@ namespace AngryKoala.Pixelization
 
         [HideInInspector] public Color OriginalColor;
 
-        [SerializeField] private Color color;
+        [SerializeField][OnValueChanged("OnColorChanged")] private Color color;
         public Color Color => color;
 
         private Color currentColor;
@@ -78,6 +78,11 @@ namespace AngryKoala.Pixelization
         }
 
         #region Validation
+
+        private void OnColorChanged()
+        {
+            Color.RGBToHSV(color, out hue, out saturation, out brightness);
+        }
 
         private void OnHSVChanged()
         {
