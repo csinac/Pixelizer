@@ -44,9 +44,16 @@ namespace AngryKoala.Pixelization
                     Color originalColor = pixelizer.PixCollection[i].Color;
                     Color adjustedColor = GetClosestColorizerColor(originalColor);
 
-                    float colorBrightness = (originalColor.r + originalColor.g + originalColor.b) / 3f;
+                    float colorBrightness = originalColor.maxColorComponent;
 
-                    pixelizer.PixCollection[i].SetColor(adjustedColor * colorBrightness);
+                    float hue;
+                    float saturation;
+                    float brightness;
+
+                    Color.RGBToHSV(adjustedColor, out hue, out saturation, out brightness);
+                    adjustedColor = Color.HSVToRGB(hue, saturation, colorBrightness);
+
+                    pixelizer.PixCollection[i].SetColor(adjustedColor);
                 }
             }
         }
@@ -77,10 +84,10 @@ namespace AngryKoala.Pixelization
             {
                 foreach(var colorizerColor in colorCollection.Colors)
                 {
-                    float colorValue = (color.r + color.g + color.b) / 3f;
-                    float colorizerColorValue = (colorizerColor.r + colorizerColor.g + colorizerColor.b) / 3f;
+                    float colorBrightness = color.maxColorComponent;
+                    float colorizerColorBrightness = colorizerColor.maxColorComponent;
 
-                    float difference = Mathf.Abs(colorValue - colorizerColorValue);
+                    float difference = Mathf.Abs(colorBrightness - colorizerColorBrightness);
 
                     if(difference < colorDifference)
                     {
