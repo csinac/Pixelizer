@@ -18,7 +18,7 @@ namespace AngryKoala.Pixelization
 
             if(GUILayout.Button("Texturize"))
             {
-                texturizer.Texturize();
+                texturizer.Texturize(true);
             }
         }
     }

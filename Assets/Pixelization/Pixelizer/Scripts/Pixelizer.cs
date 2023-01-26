@@ -1,4 +1,5 @@
 using NaughtyAttributes;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,6 +9,8 @@ namespace AngryKoala.Pixelization
     {
         [SerializeField][OnValueChanged("PreserveRatio")] private Texture2D texture;
         public Texture2D Texture => texture;
+
+        [HideInInspector] public Texture2D TexturizedTexture;
 
         private bool showOriginalDimensions => texture != null;
 
@@ -21,12 +24,20 @@ namespace AngryKoala.Pixelization
         [SerializeField][HideInInspector] private int currentHeight;
         public int Height => height;
 
+        [Tooltip("Try to match the width/height ratio of the grid to the texture.")]
         [SerializeField][OnValueChanged("PreserveRatio")] private bool preserveRatio;
 
         [SerializeField] private float pixSize;
 
         [SerializeField] private Pix pixPrefab;
 
+        [Tooltip("Use mesh UVs instead of material instances to display texturized image. Greatly reduces draw calls.")]
+        [SerializeField][EnableIf("usePerformanceModeEnabled")] private bool usePerformanceMode;
+        public bool UsePerformanceMode => usePerformanceMode;
+
+#if UNITY_EDITOR
+        private bool usePerformanceModeEnabled => !EditorApplication.isPlaying;
+#endif
         [SerializeField] private Pix[] pixCollection;
         public Pix[] PixCollection => pixCollection;
 
@@ -38,11 +49,21 @@ namespace AngryKoala.Pixelization
             {
                 OnGridSizeUpdated?.Invoke(currentWidth * pixSize, currentHeight * pixSize);
             }
+
+            if(usePerformanceMode)
+            {
+                SetPixTextures(TexturizedTexture);
+            }
         }
 
         private void Update()
         {
             OnGridSizeUpdated?.Invoke(currentWidth * pixSize, currentHeight * pixSize);
+        }
+
+        private void OnApplicationQuit()
+        {
+            SetPixTextures(null);
         }
 
         public void Pixelize()
@@ -69,6 +90,9 @@ namespace AngryKoala.Pixelization
                 for(int j = 0; j < height; j++)
                 {
                     Pix pix = Instantiate(pixPrefab, transform);
+
+                    pix.Pixelizer = this;
+                    pix.Position = new Vector2Int(i, j);
 
                     pix.gameObject.name = $"Pix[{i},{j}]";
                     pix.transform.localPosition = new Vector3(-width * pixSize / 2f + pixSize / 2f + i * pixSize, 0f, -height * pixSize / 2f + pixSize / 2f + j * pixSize);
@@ -126,6 +150,14 @@ namespace AngryKoala.Pixelization
             }
 
             pixCollection = null;
+        }
+
+        private void SetPixTextures(Texture2D texture)
+        {
+            for(int i = 0; i < pixCollection.Length; i++)
+            {
+                pixCollection[i].MeshRenderer.sharedMaterial.SetTexture("_MainTex", texture);
+            }
         }
 
         #region Validation

@@ -10,6 +10,10 @@ namespace AngryKoala.Pixelization
     {
         public override void OnInspectorGUI()
         {
+            Pix pixTarget = (Pix)target;
+
+            GUI.enabled = pixTarget.Pixelizer != null ? !pixTarget.Pixelizer.UsePerformanceMode : true;
+
             base.OnInspectorGUI();
 
             if(GUILayout.Button("Complement Color"))

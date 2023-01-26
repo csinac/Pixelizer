@@ -19,13 +19,12 @@ namespace AngryKoala.Pixelization
         [SerializeField][ShowIf("texturizationStyle", TexturizationStyle.CustomSize)] private int width;
         [SerializeField][ShowIf("texturizationStyle", TexturizationStyle.CustomSize)] private int height;
 
-        private void OnValidate()
+        private void Awake()
         {
-            width = Mathf.Max(width, 1);
-            height = Mathf.Max(height, 1);
+            Texturize();
         }
 
-        public void Texturize()
+        public void Texturize(bool saveTexture = false)
         {
             if(pixelizer.PixCollection.Length == 0)
             {
@@ -95,32 +94,46 @@ namespace AngryKoala.Pixelization
             }
 
 #if UNITY_EDITOR
-            if(!AssetDatabase.IsValidFolder("Assets/Pixelization/Texturizer/Textures"))
+            if(saveTexture)
             {
-                AssetDatabase.CreateFolder("Assets/Pixelization/Texturizer", "Textures");
+                if(!AssetDatabase.IsValidFolder("Assets/Pixelization/Texturizer/Textures"))
+                {
+                    AssetDatabase.CreateFolder("Assets/Pixelization/Texturizer", "Textures");
+                }
+
+                string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Pixelization/Texturizer/Textures/Texture.png");
+
+                byte[] bytes = newTexture.EncodeToPNG();
+                File.WriteAllBytes(path, bytes);
+
+                AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+
+                TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
+
+                importer.textureType = TextureImporterType.Default;
+
+                TextureImporterSettings importerSettings = new TextureImporterSettings();
+                importer.ReadTextureSettings(importerSettings);
+
+                importerSettings.npotScale = TextureImporterNPOTScale.None;
+
+                importer.SetTextureSettings(importerSettings);
+
+                EditorUtility.SetDirty(importer);
+                importer.SaveAndReimport();
             }
-
-            string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Pixelization/Texturizer/Textures/Texture.png");
-
-            byte[] bytes = newTexture.EncodeToPNG();
-            File.WriteAllBytes(path, bytes);
-
-            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-
-            TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
-
-            importer.textureType = TextureImporterType.Default;
-
-            TextureImporterSettings importerSettings = new TextureImporterSettings();
-            importer.ReadTextureSettings(importerSettings);
-
-            importerSettings.npotScale = TextureImporterNPOTScale.None;
-
-            importer.SetTextureSettings(importerSettings);
-
-            EditorUtility.SetDirty(importer);
-            importer.SaveAndReimport();
 #endif
+
+            newTexture.filterMode = FilterMode.Point;
+            newTexture.Apply();
+
+            pixelizer.TexturizedTexture = newTexture;
+        }
+
+        private void OnValidate()
+        {
+            width = Mathf.Max(width, 1);
+            height = Mathf.Max(height, 1);
         }
     }
 }

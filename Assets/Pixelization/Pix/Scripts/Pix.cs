@@ -5,8 +5,15 @@ namespace AngryKoala.Pixelization
 {
     public class Pix : MonoBehaviour
     {
+        [HideInInspector] public Pixelizer Pixelizer;
+
+        [SerializeField] private MeshFilter pixMeshFilter;
+        public MeshFilter MeshFilter => pixMeshFilter;
+
         [SerializeField] private MeshRenderer pixMeshRenderer;
         public MeshRenderer MeshRenderer => pixMeshRenderer;
+
+        public Vector2Int Position;
 
         [HideInInspector] public Color OriginalColor;
 
@@ -21,16 +28,37 @@ namespace AngryKoala.Pixelization
 
         [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float brightness;
 
+        public Vector2[] uvs = new Vector2[4];
         private void Start()
         {
+            if(Pixelizer.UsePerformanceMode)
+            {
+                pixMeshRenderer.sharedMaterial.shader = Shader.Find("Unlit/Texture");
+
+                Mesh mesh = pixMeshFilter.mesh;
+
+
+                uvs[0] = ConvertPixelsToUV(Position.x + .1f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
+                uvs[1] = ConvertPixelsToUV(Position.x + .9f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
+                uvs[2] = ConvertPixelsToUV(Position.x + .1f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
+                uvs[3] = ConvertPixelsToUV(Position.x + .9f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
+
+                mesh.uv = uvs;
+
+                return;
+            }
+
+            pixMeshRenderer.material.shader = Shader.Find("Unlit/Color");
             pixMeshRenderer.material.color = color;
-            pixMeshRenderer.material.SetFloat("_Glossiness", 0f);
 
             currentColor = color;
         }
 
         private void Update()
         {
+            if(Pixelizer.UsePerformanceMode)
+                return;
+
             if(currentColor != color)
             {
                 pixMeshRenderer.material.color = color;
@@ -75,6 +103,11 @@ namespace AngryKoala.Pixelization
         public void InvertColor()
         {
             color = new Color(1 - color.r, 1 - color.g, 1 - color.b);
+        }
+
+        private Vector2 ConvertPixelsToUV(float x, float y, int textureWidth, int textureHeight)
+        {
+            return new Vector2(x / textureWidth, y / textureHeight);
         }
 
         #region Validation
