@@ -46,7 +46,7 @@ namespace AngryKoala.Pixelization
 
         private void OnEnable()
         {
-            Colorizer.OnColorize += SetPixTextures;   
+            Colorizer.OnColorize += SetPixTextures;
         }
 
         private void OnDisable()

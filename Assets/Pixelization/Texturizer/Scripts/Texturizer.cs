@@ -11,6 +11,7 @@ namespace AngryKoala.Pixelization
     {
         [SerializeField] private Pixelizer pixelizer;
 
+        private Texture2D newTexture;
         private enum TexturizationStyle { PixelizerSize, CustomSize }
         [SerializeField] private TexturizationStyle texturizationStyle;
 
@@ -31,7 +32,10 @@ namespace AngryKoala.Pixelization
                 return;
             }
 
-            Texture2D newTexture = null;
+            if(newTexture != null)
+            {
+                DestroyImmediate(newTexture);
+            }
 
             if(texturizationStyle == TexturizationStyle.PixelizerSize)
             {
