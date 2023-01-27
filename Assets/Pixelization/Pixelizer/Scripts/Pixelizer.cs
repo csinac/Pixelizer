@@ -38,6 +38,7 @@ namespace AngryKoala.Pixelization
 #if UNITY_EDITOR
         private bool usePerformanceModeEnabled => !EditorApplication.isPlaying;
 #endif
+
         [SerializeField] private Pix[] pixCollection;
         public Pix[] PixCollection => pixCollection;
 
@@ -58,11 +59,11 @@ namespace AngryKoala.Pixelization
             if(pixCollection.Length > 0)
             {
                 OnGridSizeUpdated?.Invoke(currentWidth * pixSize, currentHeight * pixSize);
-            }
 
-            if(usePerformanceMode)
-            {
-                SetPixTextures();
+                if(usePerformanceMode)
+                {
+                    SetPixTextures();
+                }
             }
         }
 

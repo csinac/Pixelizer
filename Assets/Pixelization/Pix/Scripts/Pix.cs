@@ -28,7 +28,6 @@ namespace AngryKoala.Pixelization
 
         [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float brightness;
 
-        public Vector2[] uvs = new Vector2[4];
         private void Start()
         {
             if(Pixelizer.UsePerformanceMode)
@@ -37,6 +36,7 @@ namespace AngryKoala.Pixelization
 
                 Mesh mesh = pixMeshFilter.mesh;
 
+                Vector2[] uvs = new Vector2[4];
 
                 uvs[0] = ConvertPixelsToUV(Position.x + .1f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
                 uvs[1] = ConvertPixelsToUV(Position.x + .9f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);

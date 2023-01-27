@@ -28,7 +28,6 @@ namespace AngryKoala.Pixelization
         {
             if(pixelizer.PixCollection.Length == 0)
             {
-                Debug.LogError("Pixelize a texture first");
                 return;
             }
 
