@@ -20,11 +20,6 @@ namespace AngryKoala.Pixelization
         [SerializeField][ShowIf("texturizationStyle", TexturizationStyle.CustomSize)] private int width;
         [SerializeField][ShowIf("texturizationStyle", TexturizationStyle.CustomSize)] private int height;
 
-        private void Awake()
-        {
-            Texturize();
-        }
-
         public void Texturize(bool saveTexture = false)
         {
             if(pixelizer.PixCollection.Length == 0)

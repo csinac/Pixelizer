@@ -8,7 +8,6 @@ namespace AngryKoala.Pixelization
     public class Colorizer : MonoBehaviour
     {
         [SerializeField] private Pixelizer pixelizer;
-        [SerializeField] private Texturizer texturizer;
 
         [SerializeField] private ColorPalette colorCollection;
         public ColorPalette ColorCollection => colorCollection;
@@ -61,7 +60,7 @@ namespace AngryKoala.Pixelization
                 }
             }
 
-            texturizer.Texturize();
+            pixelizer.Texturizer.Texturize();
             OnColorize?.Invoke();
         }
 
@@ -180,7 +179,7 @@ namespace AngryKoala.Pixelization
                 pix.ComplementColor();
             }
 
-            texturizer.Texturize();
+            pixelizer.Texturizer.Texturize();
             OnColorize?.Invoke();
         }
 
@@ -191,7 +190,7 @@ namespace AngryKoala.Pixelization
                 pix.InvertColor();
             }
 
-            texturizer.Texturize();
+            pixelizer.Texturizer.Texturize();
             OnColorize?.Invoke();
         }
 
@@ -202,7 +201,7 @@ namespace AngryKoala.Pixelization
                 pix.ResetColor();
             }
 
-            texturizer.Texturize();
+            pixelizer.Texturizer.Texturize();
             OnColorize?.Invoke();
         }
     }

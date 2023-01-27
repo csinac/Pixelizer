@@ -9,6 +9,9 @@ namespace AngryKoala.Pixelization
 
     public class Pixelizer : MonoBehaviour
     {
+        [SerializeField] private Texturizer texturizer;
+        public Texturizer Texturizer => texturizer;
+
         [SerializeField][OnValueChanged("PreserveRatio")] private Texture2D texture;
         public Texture2D Texture => texture;
 
@@ -36,10 +39,10 @@ namespace AngryKoala.Pixelization
 
         [Tooltip("Performance Mode Level 1 uses mesh UVs instead of material instances to display texturized image. Greatly reduces draw calls." +
             "Performance Mode Level 2 uses a single mesh to display texturized image. Greatly reduces tris count.")]
-        [SerializeField][EnableIf("usePerformanceModeEnabled")] private bool usePerformanceMode;
+        [SerializeField] private bool usePerformanceMode;
         public bool UsePerformanceMode => usePerformanceMode;
 
-        [SerializeField][ShowIf("usePerformanceMode")][EnableIf("usePerformanceModeEnabled")] private PerformanceMode performanceMode;
+        [SerializeField][ShowIf("usePerformanceMode")] private PerformanceMode performanceMode;
         public PerformanceMode PerformanceMode => performanceMode;
 
 #if UNITY_EDITOR
@@ -63,20 +66,7 @@ namespace AngryKoala.Pixelization
 
         private void Start()
         {
-            if(pixCollection.Length > 0)
-            {
-                Pixelize();
-
-                foreach(var pix in pixCollection)
-                {
-                    pix.SetMaterial();
-                }
-
-                if(usePerformanceMode)
-                {
-                    SetPixTextures();
-                }
-            }
+            Pixelize();
         }
 
         private void Update()
@@ -91,9 +81,28 @@ namespace AngryKoala.Pixelization
 
         public void Pixelize()
         {
+            if(width * height == 0)
+                return;
+
             CreateGrid();
 
             SetPixColors();
+
+#if UNITY_EDITOR
+            if(UnityEditor.EditorApplication.isPlaying)
+            {
+                foreach(var pix in pixCollection)
+                {
+                    pix.SetMaterial();
+                }
+
+                if(usePerformanceMode)
+                {
+                    texturizer.Texturize();
+                    SetPixTextures();
+                }
+            }
+#endif
 
             OnGridSizeUpdated?.Invoke(currentWidth * pixSize, currentHeight * pixSize);
         }
