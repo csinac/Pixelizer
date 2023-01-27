@@ -26,16 +26,13 @@ namespace AngryKoala.Pixelization
 
         [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float brightness;
 
-        private void Start()
-        {
-            SetMaterial();
-        }
-
         public void SetColor(Color color)
         {
             this.color = color;
 
             Color.RGBToHSV(color, out hue, out saturation, out brightness);
+
+            AdjustMaterial();
         }
 
         public void ResetColor()
@@ -43,6 +40,8 @@ namespace AngryKoala.Pixelization
             color = OriginalColor;
 
             Color.RGBToHSV(color, out hue, out saturation, out brightness);
+
+            AdjustMaterial();
         }
 
         public void ComplementColor()
@@ -63,11 +62,15 @@ namespace AngryKoala.Pixelization
             }
 
             color = new Color(maxValue + minValue - color.r, maxValue + minValue - color.g, maxValue + minValue - color.b);
+
+            AdjustMaterial();
         }
 
         public void InvertColor()
         {
             color = new Color(1 - color.r, 1 - color.g, 1 - color.b);
+
+            AdjustMaterial();
         }
 
         public void SetMaterial()
@@ -107,6 +110,16 @@ namespace AngryKoala.Pixelization
             return new Vector2(x / textureWidth, y / textureHeight);
         }
 
+        private void AdjustMaterial()
+        {
+#if UNITY_EDITOR
+            if(UnityEditor.EditorApplication.isPlaying && !Pixelizer.UsePerformanceMode)
+            {
+                pixMeshRenderer.material.color = color;
+            }
+#endif
+        }
+
         #region Validation
 
         private void OnColorChanged()
@@ -117,6 +130,8 @@ namespace AngryKoala.Pixelization
         private void OnHSVChanged()
         {
             color = Color.HSVToRGB(hue, saturation, brightness);
+
+            AdjustMaterial();
         }
 
         #endregion

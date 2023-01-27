@@ -65,7 +65,12 @@ namespace AngryKoala.Pixelization
         {
             if(pixCollection.Length > 0)
             {
-                OnGridSizeUpdated?.Invoke(currentWidth * pixSize, currentHeight * pixSize);
+                Pixelize();
+
+                foreach(var pix in pixCollection)
+                {
+                    pix.SetMaterial();
+                }
 
                 if(usePerformanceMode)
                 {
