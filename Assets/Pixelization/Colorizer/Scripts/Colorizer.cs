@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace AngryKoala.Pixelization
 {
     public class Colorizer : MonoBehaviour
     {
         [SerializeField] private Pixelizer pixelizer;
+        [SerializeField] private Texturizer texturizer;
 
         [SerializeField] private ColorPalette colorCollection;
         public ColorPalette ColorCollection => colorCollection;
@@ -18,6 +20,8 @@ namespace AngryKoala.Pixelization
         [SerializeField] private ReplacementStyle replacementStyle;
 
         [SerializeField] private int extractColorPaletteColorCount;
+
+        public static UnityAction OnColorize;
 
         public void Colorize()
         {
@@ -56,6 +60,9 @@ namespace AngryKoala.Pixelization
                     pixelizer.PixCollection[i].SetColor(adjustedColor);
                 }
             }
+
+            texturizer.Texturize();
+            OnColorize?.Invoke();
         }
 
         private Color GetClosestColorizerColor(Color color)
@@ -172,6 +179,9 @@ namespace AngryKoala.Pixelization
             {
                 pix.ComplementColor();
             }
+
+            texturizer.Texturize();
+            OnColorize?.Invoke();
         }
 
         public void InvertColors()
@@ -180,6 +190,9 @@ namespace AngryKoala.Pixelization
             {
                 pix.InvertColor();
             }
+
+            texturizer.Texturize();
+            OnColorize?.Invoke();
         }
 
         public void ResetColors()
@@ -188,6 +201,9 @@ namespace AngryKoala.Pixelization
             {
                 pix.ResetColor();
             }
+
+            texturizer.Texturize();
+            OnColorize?.Invoke();
         }
     }
 }

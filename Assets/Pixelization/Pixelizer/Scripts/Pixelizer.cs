@@ -43,6 +43,16 @@ namespace AngryKoala.Pixelization
 
         public static UnityAction<float, float> OnGridSizeUpdated;
 
+        private void OnEnable()
+        {
+            Colorizer.OnColorize += SetPixTextures;   
+        }
+
+        private void OnDisable()
+        {
+            Colorizer.OnColorize += SetPixTextures;
+        }
+
         private void Start()
         {
             if(pixCollection.Length > 0)
@@ -52,7 +62,7 @@ namespace AngryKoala.Pixelization
 
             if(usePerformanceMode)
             {
-                SetPixTextures(TexturizedTexture);
+                SetPixTextures();
             }
         }
 
@@ -152,8 +162,22 @@ namespace AngryKoala.Pixelization
             pixCollection = null;
         }
 
+        private void SetPixTextures()
+        {
+            if(!usePerformanceMode)
+                return;
+
+            for(int i = 0; i < pixCollection.Length; i++)
+            {
+                pixCollection[i].MeshRenderer.sharedMaterial.SetTexture("_MainTex", TexturizedTexture);
+            }
+        }
+
         private void SetPixTextures(Texture2D texture)
         {
+            if(!usePerformanceMode)
+                return;
+
             for(int i = 0; i < pixCollection.Length; i++)
             {
                 pixCollection[i].MeshRenderer.sharedMaterial.SetTexture("_MainTex", texture);
