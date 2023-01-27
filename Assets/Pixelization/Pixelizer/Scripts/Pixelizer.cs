@@ -38,8 +38,8 @@ namespace AngryKoala.Pixelization
             "Performance Mode Level 2 uses a single mesh to display texturized image. Greatly reduces tris count.")]
         [SerializeField][EnableIf("usePerformanceModeEnabled")] private bool usePerformanceMode;
         public bool UsePerformanceMode => usePerformanceMode;
-        
-        [SerializeField][ShowIf("usePerformanceMode")] private PerformanceMode performanceMode;
+
+        [SerializeField][ShowIf("usePerformanceMode")][EnableIf("usePerformanceModeEnabled")] private PerformanceMode performanceMode;
         public PerformanceMode PerformanceMode => performanceMode;
 
 #if UNITY_EDITOR
@@ -124,18 +124,17 @@ namespace AngryKoala.Pixelization
                 }
             }
 
-            if(usePerformanceMode && performanceMode == PerformanceMode.Level2)
-            {
-                performantPix = Instantiate(pixPrefab, transform);
+            performantPix = Instantiate(pixPrefab, transform);
 
-                performantPix.Pixelizer = this;
-                performantPix.Position = Vector2Int.zero;
+            performantPix.Pixelizer = this;
+            performantPix.Position = Vector2Int.zero;
 
-                performantPix.gameObject.name = $"PerformantPix";
-                performantPix.transform.localPosition = Vector3.zero;
-                performantPix.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-                performantPix.transform.localScale = new Vector3(pixSize * width, pixSize * height, 1f);
-            }
+            performantPix.gameObject.name = $"PerformantPix";
+            performantPix.transform.localPosition = Vector3.zero;
+            performantPix.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            performantPix.transform.localScale = new Vector3(pixSize * width, pixSize * height, 1f);
+
+            performantPix.MeshRenderer.enabled = usePerformanceMode && performanceMode == PerformanceMode.Level2;
         }
 
         private void SetPixColors()

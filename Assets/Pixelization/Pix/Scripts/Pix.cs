@@ -20,8 +20,6 @@ namespace AngryKoala.Pixelization
         [SerializeField][OnValueChanged("OnColorChanged")] private Color color;
         public Color Color => color;
 
-        private Color currentColor;
-
         [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float hue;
 
         [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float saturation;
@@ -30,43 +28,7 @@ namespace AngryKoala.Pixelization
 
         private void Start()
         {
-            if(Pixelizer.UsePerformanceMode)
-            {
-                pixMeshRenderer.sharedMaterial.shader = Shader.Find("Unlit/Texture");
-
-                if(Pixelizer.PerformanceMode == PerformanceMode.Level1)
-                {
-                    Mesh mesh = pixMeshFilter.mesh;
-
-                    Vector2[] uvs = new Vector2[4];
-
-                    uvs[0] = ConvertPixelsToUV(Position.x + .1f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
-                    uvs[1] = ConvertPixelsToUV(Position.x + .9f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
-                    uvs[2] = ConvertPixelsToUV(Position.x + .1f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
-                    uvs[3] = ConvertPixelsToUV(Position.x + .9f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
-
-                    mesh.uv = uvs;
-                }
-
-                return;
-            }
-
-            pixMeshRenderer.material.shader = Shader.Find("Unlit/Color");
-            pixMeshRenderer.material.color = color;
-
-            currentColor = color;
-        }
-
-        private void Update()
-        {
-            if(Pixelizer.UsePerformanceMode)
-                return;
-
-            if(currentColor != color)
-            {
-                pixMeshRenderer.material.color = color;
-                currentColor = color;
-            }
+            SetMaterial();
         }
 
         public void SetColor(Color color)
@@ -106,6 +68,38 @@ namespace AngryKoala.Pixelization
         public void InvertColor()
         {
             color = new Color(1 - color.r, 1 - color.g, 1 - color.b);
+        }
+
+        public void SetMaterial()
+        {
+            if(Pixelizer.UsePerformanceMode)
+            {
+                pixMeshRenderer.sharedMaterial.shader = Shader.Find("Unlit/Texture");
+
+                if(Pixelizer.PerformanceMode == PerformanceMode.Level1)
+                {
+                    SetUVs();
+                }
+            }
+            else
+            {
+                pixMeshRenderer.material.shader = Shader.Find("Unlit/Color");
+                pixMeshRenderer.material.color = color;
+            }
+        }
+
+        public void SetUVs()
+        {
+            Mesh mesh = pixMeshFilter.mesh;
+
+            Vector2[] uvs = new Vector2[4];
+
+            uvs[0] = ConvertPixelsToUV(Position.x + .1f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
+            uvs[1] = ConvertPixelsToUV(Position.x + .9f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
+            uvs[2] = ConvertPixelsToUV(Position.x + .1f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
+            uvs[3] = ConvertPixelsToUV(Position.x + .9f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
+
+            mesh.uv = uvs;
         }
 
         private Vector2 ConvertPixelsToUV(float x, float y, int textureWidth, int textureHeight)
