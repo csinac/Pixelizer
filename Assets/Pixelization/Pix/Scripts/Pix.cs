@@ -34,16 +34,19 @@ namespace AngryKoala.Pixelization
             {
                 pixMeshRenderer.sharedMaterial.shader = Shader.Find("Unlit/Texture");
 
-                Mesh mesh = pixMeshFilter.mesh;
+                if(Pixelizer.PerformanceMode == PerformanceMode.Level1)
+                {
+                    Mesh mesh = pixMeshFilter.mesh;
 
-                Vector2[] uvs = new Vector2[4];
+                    Vector2[] uvs = new Vector2[4];
 
-                uvs[0] = ConvertPixelsToUV(Position.x + .1f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
-                uvs[1] = ConvertPixelsToUV(Position.x + .9f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
-                uvs[2] = ConvertPixelsToUV(Position.x + .1f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
-                uvs[3] = ConvertPixelsToUV(Position.x + .9f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
+                    uvs[0] = ConvertPixelsToUV(Position.x + .1f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
+                    uvs[1] = ConvertPixelsToUV(Position.x + .9f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
+                    uvs[2] = ConvertPixelsToUV(Position.x + .1f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
+                    uvs[3] = ConvertPixelsToUV(Position.x + .9f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
 
-                mesh.uv = uvs;
+                    mesh.uv = uvs;
+                }
 
                 return;
             }

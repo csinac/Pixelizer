@@ -5,6 +5,8 @@ using UnityEngine.Events;
 
 namespace AngryKoala.Pixelization
 {
+    public enum PerformanceMode { Level1, Level2 }
+
     public class Pixelizer : MonoBehaviour
     {
         [SerializeField][OnValueChanged("PreserveRatio")] private Texture2D texture;
@@ -30,10 +32,15 @@ namespace AngryKoala.Pixelization
         [SerializeField] private float pixSize;
 
         [SerializeField] private Pix pixPrefab;
+        [SerializeField][HideInInspector] private Pix performantPix;
 
-        [Tooltip("Use mesh UVs instead of material instances to display texturized image. Greatly reduces draw calls.")]
+        [Tooltip("Performance Mode Level 1 uses mesh UVs instead of material instances to display texturized image. Greatly reduces draw calls." +
+            "Performance Mode Level 2 uses a single mesh to display texturized image. Greatly reduces tris count.")]
         [SerializeField][EnableIf("usePerformanceModeEnabled")] private bool usePerformanceMode;
         public bool UsePerformanceMode => usePerformanceMode;
+        
+        [SerializeField][ShowIf("usePerformanceMode")] private PerformanceMode performanceMode;
+        public PerformanceMode PerformanceMode => performanceMode;
 
 #if UNITY_EDITOR
         private bool usePerformanceModeEnabled => !EditorApplication.isPlaying;
@@ -108,11 +115,26 @@ namespace AngryKoala.Pixelization
                     pix.gameObject.name = $"Pix[{i},{j}]";
                     pix.transform.localPosition = new Vector3(-width * pixSize / 2f + pixSize / 2f + i * pixSize, 0f, -height * pixSize / 2f + pixSize / 2f + j * pixSize);
                     pix.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-                    pix.transform.localScale = new Vector3(pixSize, 1f, pixSize);
+                    pix.transform.localScale = new Vector3(pixSize, pixSize, 1f);
+
+                    pix.MeshRenderer.enabled = !(usePerformanceMode && performanceMode == PerformanceMode.Level2);
 
                     pixCollection[pixIndex] = pix;
                     pixIndex++;
                 }
+            }
+
+            if(usePerformanceMode && performanceMode == PerformanceMode.Level2)
+            {
+                performantPix = Instantiate(pixPrefab, transform);
+
+                performantPix.Pixelizer = this;
+                performantPix.Position = Vector2Int.zero;
+
+                performantPix.gameObject.name = $"PerformantPix";
+                performantPix.transform.localPosition = Vector3.zero;
+                performantPix.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+                performantPix.transform.localScale = new Vector3(pixSize * width, pixSize * height, 1f);
             }
         }
 
@@ -161,6 +183,11 @@ namespace AngryKoala.Pixelization
             }
 
             pixCollection = null;
+
+            if(performantPix != null)
+            {
+                DestroyImmediate(performantPix.gameObject);
+            }
         }
 
         private void SetPixTextures()
@@ -168,9 +195,16 @@ namespace AngryKoala.Pixelization
             if(!usePerformanceMode)
                 return;
 
-            for(int i = 0; i < pixCollection.Length; i++)
+            if(performanceMode == PerformanceMode.Level1)
             {
-                pixCollection[i].MeshRenderer.sharedMaterial.SetTexture("_MainTex", TexturizedTexture);
+                for(int i = 0; i < pixCollection.Length; i++)
+                {
+                    pixCollection[i].MeshRenderer.sharedMaterial.SetTexture("_MainTex", TexturizedTexture);
+                }
+            }
+            else
+            {
+                performantPix.MeshRenderer.sharedMaterial.SetTexture("_MainTex", TexturizedTexture);
             }
         }
 
@@ -179,9 +213,16 @@ namespace AngryKoala.Pixelization
             if(!usePerformanceMode)
                 return;
 
-            for(int i = 0; i < pixCollection.Length; i++)
+            if(performanceMode == PerformanceMode.Level1)
             {
-                pixCollection[i].MeshRenderer.sharedMaterial.SetTexture("_MainTex", texture);
+                for(int i = 0; i < pixCollection.Length; i++)
+                {
+                    pixCollection[i].MeshRenderer.sharedMaterial.SetTexture("_MainTex", texture);
+                }
+            }
+            else
+            {
+                performantPix.MeshRenderer.sharedMaterial.SetTexture("_MainTex", texture);
             }
         }
 

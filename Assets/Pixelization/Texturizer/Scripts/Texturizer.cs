@@ -12,10 +12,10 @@ namespace AngryKoala.Pixelization
         [SerializeField] private Pixelizer pixelizer;
 
         private Texture2D newTexture;
-        private enum TexturizationStyle { PixelizerSize, CustomSize }
+        private enum TexturizationStyle { PixSize, CustomSize }
         [SerializeField] private TexturizationStyle texturizationStyle;
 
-        [SerializeField][ShowIf("texturizationStyle", TexturizationStyle.PixelizerSize)] private int pixSize;
+        [SerializeField][ShowIf("texturizationStyle", TexturizationStyle.PixSize)] private int pixSize;
 
         [SerializeField][ShowIf("texturizationStyle", TexturizationStyle.CustomSize)] private int width;
         [SerializeField][ShowIf("texturizationStyle", TexturizationStyle.CustomSize)] private int height;
@@ -37,7 +37,7 @@ namespace AngryKoala.Pixelization
                 DestroyImmediate(newTexture);
             }
 
-            if(texturizationStyle == TexturizationStyle.PixelizerSize)
+            if(texturizationStyle == TexturizationStyle.PixSize)
             {
                 newTexture = new Texture2D(pixelizer.Width * pixSize, pixelizer.Height * pixSize, TextureFormat.RGBA32, false);
 

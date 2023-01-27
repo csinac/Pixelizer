@@ -304,13 +304,15 @@ MonoBehaviour:
   originalWidth: 0
   originalHeight: 0
   width: 10
-  currentWidth: 2
+  currentWidth: 349
   height: 10
-  currentHeight: 2
+  currentHeight: 196
   preserveRatio: 0
   pixSize: 1
   pixPrefab: {fileID: 8721982140074355113, guid: fcb3e360a487eea4692acf326629d2b5, type: 3}
+  performantPix: {fileID: 0}
   usePerformanceMode: 0
+  performanceMode: 0
   pixCollection: []
 --- !u!4 &1028842579
 Transform:
