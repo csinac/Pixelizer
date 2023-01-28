@@ -12,6 +12,7 @@ namespace AngryKoala.Pixelization
         [SerializeField] private Pixelizer pixelizer;
 
         private Texture2D newTexture;
+
         private enum TexturizationStyle { PixSize, CustomSize }
         [SerializeField] private TexturizationStyle texturizationStyle;
 
@@ -27,7 +28,7 @@ namespace AngryKoala.Pixelization
                 return;
             }
 
-            if(newTexture != null)
+            if(newTexture != null && !saveTexture)
             {
                 DestroyImmediate(newTexture);
             }
@@ -121,11 +122,13 @@ namespace AngryKoala.Pixelization
                 importer.SaveAndReimport();
             }
 #endif
+            if(!saveTexture)
+            {
+                newTexture.filterMode = FilterMode.Point;
+                newTexture.Apply();
 
-            newTexture.filterMode = FilterMode.Point;
-            newTexture.Apply();
-
-            pixelizer.TexturizedTexture = newTexture;
+                pixelizer.TexturizedTexture = newTexture;
+            }
         }
 
         private void OnValidate()
