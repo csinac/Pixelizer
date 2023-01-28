@@ -34,13 +34,13 @@ namespace AngryKoala.Pixelization
 
             if(texturizationStyle == TexturizationStyle.PixSize)
             {
-                newTexture = new Texture2D(pixelizer.Width * pixSize, pixelizer.Height * pixSize, TextureFormat.RGBA32, false);
+                newTexture = new Texture2D(pixelizer.CurrentWidth * pixSize, pixelizer.CurrentHeight * pixSize, TextureFormat.RGBA32, false);
 
                 int pixIndex = 0;
 
-                for(int i = 0; i < pixelizer.Width; i++)
+                for(int i = 0; i < pixelizer.CurrentWidth; i++)
                 {
-                    for(int j = 0; j < pixelizer.Height; j++)
+                    for(int j = 0; j < pixelizer.CurrentHeight; j++)
                     {
                         Color[] pixColor = new Color[pixSize * pixSize];
 
@@ -56,13 +56,13 @@ namespace AngryKoala.Pixelization
             }
             if(texturizationStyle == TexturizationStyle.CustomSize)
             {
-                newTexture = new Texture2D(pixelizer.Width, pixelizer.Height, TextureFormat.RGBA32, false);
+                newTexture = new Texture2D(pixelizer.CurrentWidth, pixelizer.CurrentHeight, TextureFormat.RGBA32, false);
 
                 int pixIndex = 0;
 
-                for(int i = 0; i < pixelizer.Width; i++)
+                for(int i = 0; i < pixelizer.CurrentWidth; i++)
                 {
-                    for(int j = 0; j < pixelizer.Height; j++)
+                    for(int j = 0; j < pixelizer.CurrentHeight; j++)
                     {
                         Color[] pixColor = new Color[1];
 

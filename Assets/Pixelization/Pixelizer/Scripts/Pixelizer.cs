@@ -23,11 +23,14 @@ namespace AngryKoala.Pixelization
         [SerializeField][ReadOnly][ShowIf("showOriginalDimensions")] private int originalHeight;
 
         [SerializeField][OnValueChanged("OnWidthChanged")] private int width;
+
         [SerializeField][HideInInspector] private int currentWidth;
-        public int Width => width;
+        public int CurrentWidth => currentWidth;
         [SerializeField][OnValueChanged("OnHeightChanged")] private int height;
+
         [SerializeField][HideInInspector] private int currentHeight;
-        public int Height => height;
+        public int CurrentHeight => currentHeight;
+        
 
         [Tooltip("Try to match the width/height ratio of the grid to the texture.")]
         [SerializeField][OnValueChanged("PreserveRatio")] private bool preserveRatio;

@@ -97,10 +97,10 @@ namespace AngryKoala.Pixelization
 
             Vector2[] uvs = new Vector2[4];
 
-            uvs[0] = ConvertPixelsToUV(Position.x + .1f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
-            uvs[1] = ConvertPixelsToUV(Position.x + .9f, Position.y + .9f, Pixelizer.Width, Pixelizer.Height);
-            uvs[2] = ConvertPixelsToUV(Position.x + .1f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
-            uvs[3] = ConvertPixelsToUV(Position.x + .9f, Position.y + .1f, Pixelizer.Width, Pixelizer.Height);
+            uvs[0] = ConvertPixelsToUV(Position.x + .1f, Position.y + .9f, Pixelizer.CurrentWidth, Pixelizer.CurrentHeight);
+            uvs[1] = ConvertPixelsToUV(Position.x + .9f, Position.y + .9f, Pixelizer.CurrentWidth, Pixelizer.CurrentHeight);
+            uvs[2] = ConvertPixelsToUV(Position.x + .1f, Position.y + .1f, Pixelizer.CurrentWidth, Pixelizer.CurrentHeight);
+            uvs[3] = ConvertPixelsToUV(Position.x + .9f, Position.y + .1f, Pixelizer.CurrentWidth, Pixelizer.CurrentHeight);
 
             mesh.uv = uvs;
         }
