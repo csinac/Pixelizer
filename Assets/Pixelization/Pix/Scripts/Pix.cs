@@ -24,13 +24,13 @@ namespace AngryKoala.Pixelization
 
         [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float saturation;
 
-        [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float brightness;
+        [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float value;
 
         public void SetColor(Color color)
         {
             this.color = color;
 
-            Color.RGBToHSV(color, out hue, out saturation, out brightness);
+            Color.RGBToHSV(color, out hue, out saturation, out value);
 
             AdjustMaterial();
         }
@@ -39,7 +39,7 @@ namespace AngryKoala.Pixelization
         {
             color = OriginalColor;
 
-            Color.RGBToHSV(color, out hue, out saturation, out brightness);
+            Color.RGBToHSV(color, out hue, out saturation, out value);
 
             AdjustMaterial();
         }
@@ -124,12 +124,12 @@ namespace AngryKoala.Pixelization
 
         private void OnColorChanged()
         {
-            Color.RGBToHSV(color, out hue, out saturation, out brightness);
+            Color.RGBToHSV(color, out hue, out saturation, out value);
         }
 
         private void OnHSVChanged()
         {
-            color = Color.HSVToRGB(hue, saturation, brightness);
+            color = Color.HSVToRGB(hue, saturation, value);
 
             AdjustMaterial();
         }

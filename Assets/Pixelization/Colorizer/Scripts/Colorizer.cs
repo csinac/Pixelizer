@@ -15,7 +15,7 @@ namespace AngryKoala.Pixelization
         private enum ColorizationStyle { Replace, ReplaceWithOriginalBrightness }
         [SerializeField] private ColorizationStyle colorizationStyle;
 
-        private enum ReplacementStyle { ReplaceUsingColor, ReplaceUsingBrightness }
+        private enum ReplacementStyle { ReplaceUsingHue, ReplaceUsingSaturation, ReplaceUsingValue }
         [SerializeField] private ReplacementStyle replacementStyle;
 
         [SerializeField] private int extractColorPaletteColorCount;
@@ -66,41 +66,61 @@ namespace AngryKoala.Pixelization
 
         private Color GetClosestColorizerColor(Color color)
         {
+            float hue, saturation, value;
+            Color.RGBToHSV(color, out hue, out saturation, out value);
+
             float colorDifference = Mathf.Infinity;
 
             Color closestColor = Color.white;
 
-            if(replacementStyle == ReplacementStyle.ReplaceUsingColor)
+            switch(replacementStyle)
             {
-                foreach(var colorizerColor in colorPalette.Colors)
-                {
-                    Vector3 colorValues = new Vector3(color.r, color.g, color.b);
-                    Vector3 colorizerColorValues = new Vector3(colorizerColor.r, colorizerColor.g, colorizerColor.b);
-
-                    float difference = Vector3.Distance(colorValues, colorizerColorValues);
-
-                    if(difference < colorDifference)
+                case ReplacementStyle.ReplaceUsingHue:
+                    foreach(var colorizerColor in colorPalette.Colors)
                     {
-                        closestColor = colorizerColor;
-                        colorDifference = difference;
+                        Vector3 colorHue = new Vector3(color.r, color.g, color.b);
+                        Vector3 colorizerColorHue = new Vector3(colorizerColor.r, colorizerColor.g, colorizerColor.b);
+
+                        float difference = Vector3.Distance(colorHue, colorizerColorHue);
+
+                        if(difference < colorDifference)
+                        {
+                            closestColor = colorizerColor;
+                            colorDifference = difference;
+                        }
                     }
-                }
-            }
-            if(replacementStyle == ReplacementStyle.ReplaceUsingBrightness)
-            {
-                foreach(var colorizerColor in colorPalette.Colors)
-                {
-                    float colorBrightness = color.maxColorComponent;
-                    float colorizerColorBrightness = colorizerColor.maxColorComponent;
+                    break;
 
-                    float difference = Mathf.Abs(colorBrightness - colorizerColorBrightness);
-
-                    if(difference < colorDifference)
+                case ReplacementStyle.ReplaceUsingSaturation:
+                    foreach(var colorizerColor in colorPalette.Colors)
                     {
-                        closestColor = colorizerColor;
-                        colorDifference = difference;
+                        float colorizerHue, colorizerSaturation, colorizerValue;
+                        Color.RGBToHSV(colorizerColor, out colorizerHue, out colorizerSaturation, out colorizerValue);
+
+                        float difference = Mathf.Abs(saturation - colorizerSaturation);
+
+                        if(difference < colorDifference)
+                        {
+                            closestColor = colorizerColor;
+                            colorDifference = difference;
+                        }
                     }
-                }
+                    break;
+                case ReplacementStyle.ReplaceUsingValue:
+                    foreach(var colorizerColor in colorPalette.Colors)
+                    {
+                        float colorizerHue, colorizerSaturation, colorizerValue;
+                        Color.RGBToHSV(colorizerColor, out colorizerHue, out colorizerSaturation, out colorizerValue);
+
+                        float difference = Mathf.Abs(value - colorizerValue);
+
+                        if(difference < colorDifference)
+                        {
+                            closestColor = colorizerColor;
+                            colorDifference = difference;
+                        }
+                    }
+                    break;
             }
 
             return closestColor;
