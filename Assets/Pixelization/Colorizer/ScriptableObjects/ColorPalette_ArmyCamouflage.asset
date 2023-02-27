@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 895fc94d95bd89145bbd0eb6707ac53e, type: 3}
+  m_Name: ColorPalette_ArmyCamouflage
+  m_EditorClassIdentifier: 
+  colors:
+  - {r: 0.37647063, g: 0.26666668, b: 0.22352943, a: 0}
+  - {r: 0.61960787, g: 0.6039216, b: 0.45882356, a: 0}
+  - {r: 0.10980393, g: 0.13333334, b: 0.18039216, a: 0}
+  - {r: 0.25490198, g: 0.3254902, b: 0.23137257, a: 0}
+  - {r: 0.33333334, g: 0.28235295, b: 0.2509804, a: 0}

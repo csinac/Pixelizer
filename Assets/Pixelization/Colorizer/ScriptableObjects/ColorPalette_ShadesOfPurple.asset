@@ -10,6 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 895fc94d95bd89145bbd0eb6707ac53e, type: 3}
-  m_Name: ColorPalette
+  m_Name: ColorPalette_ShadesOfPurple
   m_EditorClassIdentifier: 
-  colors: []
+  colors:
+  - {r: 0.93725497, g: 0.73333335, b: 1, a: 0}
+  - {r: 0.8470589, g: 0.5882353, b: 1, a: 0}
+  - {r: 0.74509805, g: 0.16078432, b: 0.92549026, a: 0}
+  - {r: 0.5019608, g: 0, b: 0.5019608, a: 0}
+  - {r: 0.40000004, g: 0, b: 0.40000004, a: 0}
