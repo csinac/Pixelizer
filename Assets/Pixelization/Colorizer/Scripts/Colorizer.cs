@@ -9,8 +9,8 @@ namespace AngryKoala.Pixelization
     {
         [SerializeField] private Pixelizer pixelizer;
 
-        [SerializeField] private ColorPalette colorCollection;
-        public ColorPalette ColorCollection => colorCollection;
+        [SerializeField] private ColorPalette colorPalette;
+        public ColorPalette ColorPalette => colorPalette;
 
         private enum ColorizationStyle { Replace, ReplaceWithOriginalBrightness }
         [SerializeField] private ColorizationStyle colorizationStyle;
@@ -30,7 +30,7 @@ namespace AngryKoala.Pixelization
                 return;
             }
 
-            if(colorCollection.Colors.Count == 0)
+            if(colorPalette.Colors.Count == 0)
             {
                 Debug.LogWarning("No colors selected");
                 return;
@@ -72,7 +72,7 @@ namespace AngryKoala.Pixelization
 
             if(replacementStyle == ReplacementStyle.ReplaceUsingColor)
             {
-                foreach(var colorizerColor in colorCollection.Colors)
+                foreach(var colorizerColor in colorPalette.Colors)
                 {
                     Vector3 colorValues = new Vector3(color.r, color.g, color.b);
                     Vector3 colorizerColorValues = new Vector3(colorizerColor.r, colorizerColor.g, colorizerColor.b);
@@ -88,7 +88,7 @@ namespace AngryKoala.Pixelization
             }
             if(replacementStyle == ReplacementStyle.ReplaceUsingBrightness)
             {
-                foreach(var colorizerColor in colorCollection.Colors)
+                foreach(var colorizerColor in colorPalette.Colors)
                 {
                     float colorBrightness = color.maxColorComponent;
                     float colorizerColorBrightness = colorizerColor.maxColorComponent;
@@ -160,15 +160,20 @@ namespace AngryKoala.Pixelization
                 }
             }
 
-            colorCollection.Colors.Clear();
+#if UNITY_EDITOR
+
+            ColorPalette newColorPalette = ScriptableObject.CreateInstance<ColorPalette>();
 
             foreach(var centroid in centroids)
             {
-                colorCollection.Colors.Add(centroid);
+                newColorPalette.Colors.Add(centroid);
             }
 
-#if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(colorCollection);
+            string path = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Pixelization/Colorizer/ScriptableObjects/ColorPalette_.asset");
+
+            UnityEditor.AssetDatabase.CreateAsset(newColorPalette, path);
+
+            colorPalette = newColorPalette;
 #endif
         }
 

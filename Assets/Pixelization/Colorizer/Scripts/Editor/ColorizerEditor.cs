@@ -27,7 +27,7 @@ namespace AngryKoala.Pixelization
 
             if(GUILayout.Button("Clear Color Collection"))
             {
-                colorizer.ColorCollection.Colors.Clear();
+                colorizer.ColorPalette.Colors.Clear();
             }
 
             if(GUILayout.Button("Complement Colors"))
