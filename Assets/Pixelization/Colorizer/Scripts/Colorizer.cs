@@ -12,7 +12,7 @@ namespace AngryKoala.Pixelization
         [SerializeField] private ColorPalette colorPalette;
         public ColorPalette ColorPalette => colorPalette;
 
-        private enum ColorizationStyle { Replace, ReplaceWithOriginalBrightness }
+        private enum ColorizationStyle { Replace, ReplaceWithOriginalSaturation, ReplaceWithOriginalValue }
         [SerializeField] private ColorizationStyle colorizationStyle;
 
         private enum ReplacementStyle { ReplaceUsingHue, ReplaceUsingSaturation, ReplaceUsingValue }
@@ -38,25 +38,45 @@ namespace AngryKoala.Pixelization
 
             for(int i = 0; i < pixelizer.PixCollection.Length; i++)
             {
-                if(colorizationStyle == ColorizationStyle.Replace)
+                switch(colorizationStyle)
                 {
-                    pixelizer.PixCollection[i].SetColor(GetClosestColorizerColor(pixelizer.PixCollection[i].Color));
-                }
-                if(colorizationStyle == ColorizationStyle.ReplaceWithOriginalBrightness)
-                {
-                    Color originalColor = pixelizer.PixCollection[i].Color;
-                    Color adjustedColor = GetClosestColorizerColor(originalColor);
+                    case ColorizationStyle.Replace:
+                        pixelizer.PixCollection[i].SetColor(GetClosestColorizerColor(pixelizer.PixCollection[i].Color));
+                        break;
 
-                    float colorBrightness = originalColor.maxColorComponent;
+                    case ColorizationStyle.ReplaceWithOriginalSaturation:
+                        {
+                            Color originalColor = pixelizer.PixCollection[i].Color;
+                            Color adjustedColor = GetClosestColorizerColor(originalColor);
 
-                    float hue;
-                    float saturation;
-                    float brightness;
+                            float originalHue, originalSaturation, originalValue;
+                            float hue, saturation, value;
 
-                    Color.RGBToHSV(adjustedColor, out hue, out saturation, out brightness);
-                    adjustedColor = Color.HSVToRGB(hue, saturation, colorBrightness);
+                            Color.RGBToHSV(originalColor, out originalHue, out originalSaturation, out originalValue);
+                            Color.RGBToHSV(adjustedColor, out hue, out saturation, out value);
 
-                    pixelizer.PixCollection[i].SetColor(adjustedColor);
+                            adjustedColor = Color.HSVToRGB(hue, originalSaturation, value);
+
+                            pixelizer.PixCollection[i].SetColor(adjustedColor);
+                        }
+                        break;
+
+                    case ColorizationStyle.ReplaceWithOriginalValue:
+                        {
+                            Color originalColor = pixelizer.PixCollection[i].Color;
+                            Color adjustedColor = GetClosestColorizerColor(originalColor);
+
+                            float originalHue, originalSaturation, originalValue;
+                            float hue, saturation, value;
+
+                            Color.RGBToHSV(originalColor, out originalHue, out originalSaturation, out originalValue);
+                            Color.RGBToHSV(adjustedColor, out hue, out saturation, out value);
+
+                            adjustedColor = Color.HSVToRGB(hue, saturation, originalValue);
+
+                            pixelizer.PixCollection[i].SetColor(adjustedColor);
+                        }
+                        break;
                 }
             }
 
