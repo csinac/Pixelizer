@@ -35,6 +35,12 @@ namespace AngryKoala.Pixelization
                 return;
             }
 
+            if(colorPalette == null)
+            {
+                Debug.LogWarning("Color palette is not assigned");
+                return;
+            }
+
             if(colorPalette.Colors.Count == 0)
             {
                 Debug.LogWarning("No colors selected");

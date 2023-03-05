@@ -87,6 +87,12 @@ namespace AngryKoala.Pixelization
             if(width * height == 0)
                 return;
 
+            if(texture == null)
+            {
+                Debug.LogWarning("No texture found to pixelize");
+                return;
+            }
+
             CreateGrid();
 
             SetPixColors();
