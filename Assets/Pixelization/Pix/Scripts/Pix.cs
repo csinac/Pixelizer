@@ -20,6 +20,9 @@ namespace AngryKoala.Pixelization
         [SerializeField][OnValueChanged("OnColorChanged")] private Color color;
         public Color Color => color;
 
+        // Used with colorizer color groups
+        [HideInInspector] public int ColorIndex;
+
         [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float hue;
 
         [SerializeField][OnValueChanged("OnHSVChanged")][Range(0f, 1f)] private float saturation;

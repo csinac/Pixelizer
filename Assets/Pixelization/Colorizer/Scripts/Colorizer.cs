@@ -22,6 +22,9 @@ namespace AngryKoala.Pixelization
 
         [SerializeField] private bool useColorGroups;
 
+        private List<Color> colorGroupsColors = new List<Color>();
+        private Color[] sortedColorPaletteColors;
+
         public static UnityAction OnColorize;
 
         public void Colorize()
@@ -38,11 +41,10 @@ namespace AngryKoala.Pixelization
                 return;
             }
 
-            List<Color> colorGroupColors = new List<Color>();
-
             if(useColorGroups)
             {
-                colorGroupColors = GetColorPalette(colorPalette.Colors.Count);
+                colorGroupsColors = GetColorPalette(colorPalette.Colors.Count);
+                MapColorPaletteColorsToColorGroupsColors();
             }
 
             for(int i = 0; i < pixelizer.PixCollection.Length; i++)
@@ -50,21 +52,37 @@ namespace AngryKoala.Pixelization
                 switch(colorizationStyle)
                 {
                     case ColorizationStyle.Replace:
-                        pixelizer.PixCollection[i].SetColor(GetClosestColorizerColor(pixelizer.PixCollection[i].Color, colorPalette.Colors));
+                        if(useColorGroups)
+                        {
+                            Color closestColor = GetClosestColor(pixelizer.PixCollection[i].Color, colorGroupsColors);
+                            pixelizer.PixCollection[i].ColorIndex = colorGroupsColors.IndexOf(closestColor);
+                            pixelizer.PixCollection[i].SetColor(sortedColorPaletteColors[pixelizer.PixCollection[i].ColorIndex]);
+                        }
+                        else
+                        {
+                            pixelizer.PixCollection[i].SetColor(GetClosestColor(pixelizer.PixCollection[i].Color, colorPalette.Colors));
+                        }
                         break;
 
                     case ColorizationStyle.ReplaceWithOriginalSaturation:
                         {
                             Color originalColor = pixelizer.PixCollection[i].Color;
-                            Color adjustedColor = GetClosestColorizerColor(originalColor, colorPalette.Colors);
+                            Color adjustedColor;
 
-                            float originalHue, originalSaturation, originalValue;
+                            if(useColorGroups)
+                            {
+                                adjustedColor = GetClosestColor(originalColor, colorGroupsColors);
+                                pixelizer.PixCollection[i].ColorIndex = colorGroupsColors.IndexOf(adjustedColor);
+                                adjustedColor = sortedColorPaletteColors[pixelizer.PixCollection[i].ColorIndex];
+                            }
+                            else
+                            {
+                                adjustedColor = GetClosestColor(originalColor, colorPalette.Colors);
+                            }
+
                             float hue, saturation, value;
-
-                            Color.RGBToHSV(originalColor, out originalHue, out originalSaturation, out originalValue);
                             Color.RGBToHSV(adjustedColor, out hue, out saturation, out value);
-
-                            adjustedColor = Color.HSVToRGB(hue, originalSaturation, value);
+                            adjustedColor = Color.HSVToRGB(hue, originalColor.Saturation(), value);
 
                             pixelizer.PixCollection[i].SetColor(adjustedColor);
                         }
@@ -73,15 +91,22 @@ namespace AngryKoala.Pixelization
                     case ColorizationStyle.ReplaceWithOriginalValue:
                         {
                             Color originalColor = pixelizer.PixCollection[i].Color;
-                            Color adjustedColor = GetClosestColorizerColor(originalColor, colorPalette.Colors);
+                            Color adjustedColor;
 
-                            float originalHue, originalSaturation, originalValue;
+                            if(useColorGroups)
+                            {
+                                adjustedColor = GetClosestColor(originalColor, colorGroupsColors);
+                                pixelizer.PixCollection[i].ColorIndex = colorGroupsColors.IndexOf(adjustedColor);
+                                adjustedColor = sortedColorPaletteColors[pixelizer.PixCollection[i].ColorIndex];
+                            }
+                            else
+                            {
+                                adjustedColor = GetClosestColor(originalColor, colorPalette.Colors);
+                            }
+
                             float hue, saturation, value;
-
-                            Color.RGBToHSV(originalColor, out originalHue, out originalSaturation, out originalValue);
                             Color.RGBToHSV(adjustedColor, out hue, out saturation, out value);
-
-                            adjustedColor = Color.HSVToRGB(hue, saturation, originalValue);
+                            adjustedColor = Color.HSVToRGB(hue, saturation, originalColor.Value());
 
                             pixelizer.PixCollection[i].SetColor(adjustedColor);
                         }
@@ -93,7 +118,7 @@ namespace AngryKoala.Pixelization
             OnColorize?.Invoke();
         }
 
-        private Color GetClosestColorizerColor(Color color, List<Color> colorizerColors)
+        private Color GetClosestColor(Color color, List<Color> colorizerColors)
         {
             float hue, saturation, value;
             Color.RGBToHSV(color, out hue, out saturation, out value);
@@ -155,31 +180,7 @@ namespace AngryKoala.Pixelization
             return closestColor;
         }
 
-        public void ExtractColorPalette()
-        {
-#if UNITY_EDITOR
-            if(extractColorPaletteColorCount <= 0)
-            {
-                Debug.LogWarning("Color palette color count must be greater than 0");
-                return;
-            }
-
-            List<Color> centroids = GetColorPalette(extractColorPaletteColorCount);
-
-            ColorPalette newColorPalette = ScriptableObject.CreateInstance<ColorPalette>();
-
-            foreach(var centroid in centroids)
-            {
-                newColorPalette.Colors.Add(centroid);
-            }
-
-            string path = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Pixelization/Colorizer/ScriptableObjects/ColorPalette_.asset");
-
-            UnityEditor.AssetDatabase.CreateAsset(newColorPalette, path);
-
-            colorPalette = newColorPalette;
-#endif
-        }
+        #region Color Palette
 
         private List<Color> GetColorPalette(int colorCount)
         {
@@ -238,6 +239,151 @@ namespace AngryKoala.Pixelization
             return centroids.ToList();
         }
 
+        public void ExtractColorPalette()
+        {
+#if UNITY_EDITOR
+            if(extractColorPaletteColorCount <= 0)
+            {
+                Debug.LogWarning("Color palette color count must be greater than 0");
+                return;
+            }
+
+            List<Color> centroids = GetColorPalette(extractColorPaletteColorCount);
+
+            ColorPalette newColorPalette = ScriptableObject.CreateInstance<ColorPalette>();
+
+            foreach(var centroid in centroids)
+            {
+                newColorPalette.Colors.Add(centroid);
+            }
+
+            string path = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Pixelization/Colorizer/ScriptableObjects/ColorPalette_.asset");
+
+            UnityEditor.AssetDatabase.CreateAsset(newColorPalette, path);
+
+            colorPalette = newColorPalette;
+#endif
+        }
+
+        private void MapColorPaletteColorsToColorGroupsColors()
+        {
+            List<Color> colorPaletteColorsToSort = new List<Color>();
+            List<Color> colorGroupsColorsToSort = new List<Color>();
+
+            foreach(var color in colorPalette.Colors)
+            {
+                colorPaletteColorsToSort.Add(color);
+            }
+
+            foreach(var color in colorGroupsColors)
+            {
+                colorGroupsColorsToSort.Add(color);
+            }
+
+            sortedColorPaletteColors = new Color[colorPaletteColorsToSort.Count];
+
+            switch(replacementStyle)
+            {
+                case ReplacementStyle.ReplaceUsingHue:
+                    {
+                        int i = colorPalette.Colors.Count - 1;
+                        while(i >= 0)
+                        {
+                            Vector3 colorGroupsColorHue = new Vector3(colorGroupsColorsToSort[i].r, colorGroupsColorsToSort[i].g, colorGroupsColorsToSort[i].b);
+
+                            float colorDifference = Mathf.Infinity;
+
+                            Color closestColor = Color.white;
+
+                            for(int index = i; index >= 0; index--)
+                            {
+                                Vector3 colorPaletteColorHue = new Vector3(colorPaletteColorsToSort[index].r, colorPaletteColorsToSort[index].g, colorPaletteColorsToSort[index].b);
+
+                                float difference = Vector3.Distance(colorPaletteColorHue, colorGroupsColorHue);
+
+                                if(difference < colorDifference)
+                                {
+                                    closestColor = colorPaletteColorsToSort[index];
+                                    colorDifference = difference;
+                                }
+                            }
+
+                            sortedColorPaletteColors[i] = closestColor;
+                            colorPaletteColorsToSort.Remove(closestColor);
+                            colorGroupsColorsToSort.RemoveAt(i);
+                            i--;
+                        }
+                    }
+                    break;
+                case ReplacementStyle.ReplaceUsingSaturation:
+                    {
+                        int i = colorPalette.Colors.Count - 1;
+                        while(i >= 0)
+                        {
+                            float colorGroupsColorSaturation = colorGroupsColorsToSort[i].Saturation();
+
+                            float colorDifference = Mathf.Infinity;
+
+                            Color closestColor = Color.white;
+
+                            for(int index = i; index >= 0; index--)
+                            {
+                                float colorPaletteColorSaturation = colorPaletteColorsToSort[index].Saturation();
+
+                                float difference = Mathf.Abs(colorPaletteColorSaturation - colorGroupsColorSaturation);
+
+                                if(difference < colorDifference)
+                                {
+                                    closestColor = colorPaletteColorsToSort[index];
+                                    colorDifference = difference;
+                                }
+                            }
+
+                            sortedColorPaletteColors[i] = closestColor;
+                            colorPaletteColorsToSort.Remove(closestColor);
+                            colorGroupsColorsToSort.RemoveAt(i);
+                            i--;
+                        }
+                    }
+                    break;
+                case ReplacementStyle.ReplaceUsingValue:
+                    {
+                        int i = colorPalette.Colors.Count - 1;
+                        while(i >= 0)
+                        {
+                            float colorGroupsColorValue = colorGroupsColorsToSort[i].Value();
+
+                            float colorDifference = Mathf.Infinity;
+
+                            Color closestColor = Color.white;
+
+                            for(int index = i; index >= 0; index--)
+                            {
+                                float colorPaletteColorValue = colorPaletteColorsToSort[index].Value();
+
+                                float difference = Mathf.Abs(colorPaletteColorValue - colorGroupsColorValue);
+
+                                if(difference < colorDifference)
+                                {
+                                    closestColor = colorPaletteColorsToSort[index];
+                                    colorDifference = difference;
+                                }
+                            }
+
+                            sortedColorPaletteColors[i] = closestColor;
+                            colorPaletteColorsToSort.Remove(closestColor);
+                            colorGroupsColorsToSort.RemoveAt(i);
+                            i--;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region Color Operations
+
         public void ComplementColors()
         {
             foreach(var pix in pixelizer.PixCollection)
@@ -270,5 +416,8 @@ namespace AngryKoala.Pixelization
             pixelizer.Texturizer.Texturize();
             OnColorize?.Invoke();
         }
+
+        #endregion
+
     }
 }
