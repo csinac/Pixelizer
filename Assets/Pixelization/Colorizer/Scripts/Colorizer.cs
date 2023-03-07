@@ -20,6 +20,11 @@ namespace AngryKoala.Pixelization
         private enum ColorizationStyle { Replace, ReplaceWithOriginalSaturation, ReplaceWithOriginalValue }
         [SerializeField] private ColorizationStyle colorizationStyle;
 
+        private bool showUseRamp => (colorizationStyle == ColorizationStyle.ReplaceWithOriginalSaturation || colorizationStyle == ColorizationStyle.ReplaceWithOriginalValue);
+        [SerializeField][ShowIf("showUseRamp")] private bool useRamp;
+        private bool showRampCount => (colorizationStyle == ColorizationStyle.ReplaceWithOriginalSaturation || colorizationStyle == ColorizationStyle.ReplaceWithOriginalValue) && useRamp;
+        [SerializeField][ShowIf("showRampCount")][Range(1, 100)] private int rampCount = 1;
+
         private enum ReplacementStyle { ReplaceUsingHue, ReplaceUsingSaturation, ReplaceUsingValue }
         [SerializeField] private ReplacementStyle replacementStyle;
 
@@ -103,7 +108,17 @@ namespace AngryKoala.Pixelization
 
                             float hue, saturation, value;
                             Color.RGBToHSV(adjustedColor, out hue, out saturation, out value);
-                            adjustedColor = Color.HSVToRGB(hue, originalColor.Saturation(), value);
+
+                            float originalSaturation = originalColor.Saturation();
+
+                            if(useRamp)
+                            {
+                                adjustedColor = Color.HSVToRGB(hue, (100f / rampCount) * (Mathf.RoundToInt((originalSaturation * 100f) / (100f / rampCount))) / 100f, value);
+                            }
+                            else
+                            {
+                                adjustedColor = Color.HSVToRGB(hue, originalSaturation, value);
+                            }
 
                             pixelizer.PixCollection[i].SetColor(adjustedColor);
                         }
@@ -127,7 +142,17 @@ namespace AngryKoala.Pixelization
 
                             float hue, saturation, value;
                             Color.RGBToHSV(adjustedColor, out hue, out saturation, out value);
-                            adjustedColor = Color.HSVToRGB(hue, saturation, originalColor.Value());
+
+                            float originalValue = originalColor.Value();
+
+                            if(useRamp)
+                            {
+                                adjustedColor = Color.HSVToRGB(hue, saturation, (100f / rampCount) * (Mathf.RoundToInt((originalValue * 100f) / (100f / rampCount))) / 100f);
+                            }
+                            else
+                            {
+                                adjustedColor = Color.HSVToRGB(hue, saturation, originalValue);
+                            }
 
                             pixelizer.PixCollection[i].SetColor(adjustedColor);
                         }

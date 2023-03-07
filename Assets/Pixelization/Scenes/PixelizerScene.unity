@@ -347,6 +347,8 @@ MonoBehaviour:
   colorPaletteColorCount: 1
   createNewColorPalette: 0
   colorizationStyle: 0
+  useRamp: 0
+  rampCount: 1
   replacementStyle: 0
   useColorGroups: 0
 --- !u!114 &1028842581
