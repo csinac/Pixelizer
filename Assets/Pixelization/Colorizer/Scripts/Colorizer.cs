@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,7 +13,9 @@ namespace AngryKoala.Pixelization
         [SerializeField] private ColorPalette colorPalette;
         public ColorPalette ColorPalette => colorPalette;
 
-        [SerializeField] private int extractColorPaletteColorCount;
+        [SerializeField][OnValueChanged("OnColorPaletteColorCountChanged")] private int colorPaletteColorCount;
+
+        [SerializeField] private bool createNewColorPalette;
 
         private enum ColorizationStyle { Replace, ReplaceWithOriginalSaturation, ReplaceWithOriginalValue }
         [SerializeField] private ColorizationStyle colorizationStyle;
@@ -33,6 +36,18 @@ namespace AngryKoala.Pixelization
             {
                 Debug.LogWarning("Pixelize a texture first");
                 return;
+            }
+
+            if(createNewColorPalette)
+            {
+                ColorPalette newColorPalette = ScriptableObject.CreateInstance<ColorPalette>();
+
+                foreach(var color in GetColorPalette(colorPaletteColorCount))
+                {
+                    newColorPalette.Colors.Add(color);
+                }
+
+                colorPalette = newColorPalette;
             }
 
             if(colorPalette == null)
@@ -248,13 +263,13 @@ namespace AngryKoala.Pixelization
         public void ExtractColorPalette()
         {
 #if UNITY_EDITOR
-            if(extractColorPaletteColorCount <= 0)
+            if(colorPaletteColorCount <= 0)
             {
                 Debug.LogWarning("Color palette color count must be greater than 0");
                 return;
             }
 
-            List<Color> centroids = GetColorPalette(extractColorPaletteColorCount);
+            List<Color> centroids = GetColorPalette(colorPaletteColorCount);
 
             ColorPalette newColorPalette = ScriptableObject.CreateInstance<ColorPalette>();
 
@@ -262,12 +277,22 @@ namespace AngryKoala.Pixelization
             {
                 newColorPalette.Colors.Add(centroid);
             }
+            colorPalette = newColorPalette;
+#endif
+        }
+
+        public void SaveColorPalette()
+        {
+#if UNITY_EDITOR
+            if(colorPalette == null)
+            {
+                Debug.LogWarning("Color palette is not assigned");
+                return;
+            }
 
             string path = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Pixelization/Colorizer/ScriptableObjects/ColorPalette_.asset");
 
-            UnityEditor.AssetDatabase.CreateAsset(newColorPalette, path);
-
-            colorPalette = newColorPalette;
+            UnityEditor.AssetDatabase.CreateAsset(colorPalette, path);
 #endif
         }
 
@@ -425,5 +450,13 @@ namespace AngryKoala.Pixelization
 
         #endregion
 
+        #region Validation
+
+        private void OnColorPaletteColorCountChanged()
+        {
+            colorPaletteColorCount = Mathf.Max(colorPaletteColorCount, 1);
+        }
+
+        #endregion
     }
 }
