@@ -13,7 +13,7 @@ namespace AngryKoala.Pixelization
         [SerializeField] private ColorPalette colorPalette;
         public ColorPalette ColorPalette => colorPalette;
 
-        [SerializeField][OnValueChanged("OnColorPaletteColorCountChanged")] private int colorPaletteColorCount;
+        [SerializeField][OnValueChanged("OnColorPaletteColorCountChanged")][Range(1, 20)] private int colorPaletteColorCount;
 
         [SerializeField] private bool createNewColorPalette;
 
