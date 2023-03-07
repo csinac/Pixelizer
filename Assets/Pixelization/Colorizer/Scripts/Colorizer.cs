@@ -23,7 +23,7 @@ namespace AngryKoala.Pixelization
         private bool showUseRamp => (colorizationStyle == ColorizationStyle.ReplaceWithOriginalSaturation || colorizationStyle == ColorizationStyle.ReplaceWithOriginalValue);
         [SerializeField][ShowIf("showUseRamp")] private bool useRamp;
         private bool showRampCount => (colorizationStyle == ColorizationStyle.ReplaceWithOriginalSaturation || colorizationStyle == ColorizationStyle.ReplaceWithOriginalValue) && useRamp;
-        [SerializeField][ShowIf("showRampCount")][Range(1, 100)] private int rampCount = 1;
+        [SerializeField][ShowIf("showRampCount")][Range(1, 20)] private int rampCount = 1;
 
         private enum ReplacementStyle { ReplaceUsingHue, ReplaceUsingSaturation, ReplaceUsingValue }
         [SerializeField] private ReplacementStyle replacementStyle;
@@ -113,7 +113,7 @@ namespace AngryKoala.Pixelization
 
                             if(useRamp)
                             {
-                                adjustedColor = Color.HSVToRGB(hue, (100f / rampCount) * (Mathf.RoundToInt((originalSaturation * 100f) / (100f / rampCount))) / 100f, value);
+                                adjustedColor = Color.HSVToRGB(hue, (20f / rampCount) * (Mathf.RoundToInt((originalSaturation * 20f) / (20f / rampCount))) / 20f, value);
                             }
                             else
                             {
@@ -147,7 +147,7 @@ namespace AngryKoala.Pixelization
 
                             if(useRamp)
                             {
-                                adjustedColor = Color.HSVToRGB(hue, saturation, (100f / rampCount) * (Mathf.RoundToInt((originalValue * 100f) / (100f / rampCount))) / 100f);
+                                adjustedColor = Color.HSVToRGB(hue, saturation, (20f / rampCount) * (Mathf.RoundToInt((originalValue * 20f) / (20f / rampCount))) / 20f);
                             }
                             else
                             {
