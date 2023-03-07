@@ -210,7 +210,7 @@ namespace AngryKoala.Pixelization
             List<Color> pixels = new List<Color>();
             foreach(var pix in pixelizer.PixCollection)
             {
-                pixels.Add(pix.Color);
+                pixels.Add(pix.OriginalColor);
             }
             int pixelCount = pixels.Count;
 
