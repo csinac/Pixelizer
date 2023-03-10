@@ -47,6 +47,22 @@ namespace AngryKoala.Pixelization
 
         }
 
+        public static float HueDifference(this Color c1, Color c2)
+        {
+            float difference = Mathf.Abs(c1.Hue() - c2.Hue());
+            return difference > 0.5f ? (1.0f - difference) : difference;
+        }
+
+        public static float SaturationDifference(this Color c1, Color c2)
+        {
+            return Mathf.Abs(c1.Saturation() - c2.Saturation());
+        }
+
+        public static float ValueDifference(this Color c1, Color c2)
+        {
+            return Mathf.Abs(c1.Value() - c2.Value());
+        }
+
         public static Color ClearWhite => new Color(1f, 1f, 1f, 0f);
     }
 }
