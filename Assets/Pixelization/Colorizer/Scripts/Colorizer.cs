@@ -78,29 +78,44 @@ namespace AngryKoala.Pixelization
                 MapColorPaletteColorsToColorGroupsColors();
             }
 
-            for(int i = 0; i < pixelizer.PixCollection.Length; i++)
-            {
-                switch(colorizationStyle)
-                {
-                    case ColorizationStyle.Replace:
-                        if(useColorGroups)
-                        {
-                            Color closestColor = GetClosestColor(pixelizer.PixCollection[i].Color, colorGroupsColors, replacementStyle);
-                            pixelizer.PixCollection[i].ColorIndex = colorGroupsColors.IndexOf(closestColor);
-                            pixelizer.PixCollection[i].SetColor(sortedColorPaletteColors[pixelizer.PixCollection[i].ColorIndex]);
-                        }
-                        else
-                        {
-                            pixelizer.PixCollection[i].SetColor(GetClosestColor(pixelizer.PixCollection[i].Color, colorPalette.Colors, replacementStyle));
-                        }
-                        break;
+            Vector3[] colorArray = new Vector3[pixelizer.PixCollection.Length];
+            for (int i = 0; i < pixelizer.PixCollection.Length; i++)
+                colorArray[i] = ColorOp.ColorToVector(pixelizer.PixCollection[i].Color);
 
-                    case ColorizationStyle.ReplaceWithOriginalSaturation:
+            for(int y = 0; y < pixelizer.CurrentHeight; y++)
+            {
+                for (int x = 0; x < pixelizer.CurrentHeight; x++)
+                {
+                    int i = y * pixelizer.CurrentWidth + x;
+                    Color match = Color.black;
+                    Color color = ColorOp.VectorToColor(colorArray[i]);
+
+                    switch (colorizationStyle)
+                    {
+                        case ColorizationStyle.Replace:
+                            if (useColorGroups)
+                            {
+                                Color closestColor = GetClosestColor(color,
+                                    colorGroupsColors, replacementStyle);
+                                pixelizer.PixCollection[i].ColorIndex = colorGroupsColors.IndexOf(closestColor);
+                                match = sortedColorPaletteColors[pixelizer.PixCollection[i].ColorIndex];
+                                pixelizer.PixCollection[i].SetColor(match);
+                            }
+                            else
+                            {
+                                match = GetClosestColor(color,
+                                    colorPalette.Colors, replacementStyle);
+                                pixelizer.PixCollection[i].SetColor(match);
+                            }
+
+                            break;
+
+                        case ColorizationStyle.ReplaceWithOriginalSaturation:
                         {
-                            Color originalColor = pixelizer.PixCollection[i].Color;
+                            Color originalColor = color;
                             Color adjustedColor;
 
-                            if(useColorGroups)
+                            if (useColorGroups)
                             {
                                 adjustedColor = GetClosestColor(originalColor, colorGroupsColors, replacementStyle);
                                 pixelizer.PixCollection[i].ColorIndex = colorGroupsColors.IndexOf(adjustedColor);
@@ -116,25 +131,28 @@ namespace AngryKoala.Pixelization
 
                             float originalSaturation = originalColor.Saturation();
 
-                            if(useRamp)
+                            if (useRamp)
                             {
-                                adjustedColor = Color.HSVToRGB(hue, (20f / rampCount) * (Mathf.RoundToInt((originalSaturation * 20f) / (20f / rampCount))) / 20f, value);
+                                adjustedColor = Color.HSVToRGB(hue,
+                                    (20f / rampCount) *
+                                    (Mathf.RoundToInt((originalSaturation * 20f) / (20f / rampCount))) / 20f, value);
                             }
                             else
                             {
                                 adjustedColor = Color.HSVToRGB(hue, originalSaturation, value);
                             }
 
-                            pixelizer.PixCollection[i].SetColor(adjustedColor);
+                            match = adjustedColor;
+                            pixelizer.PixCollection[i].SetColor(match);
                         }
-                        break;
+                            break;
 
-                    case ColorizationStyle.ReplaceWithOriginalValue:
+                        case ColorizationStyle.ReplaceWithOriginalValue:
                         {
-                            Color originalColor = pixelizer.PixCollection[i].Color;
+                            Color originalColor = color;
                             Color adjustedColor;
 
-                            if(useColorGroups)
+                            if (useColorGroups)
                             {
                                 adjustedColor = GetClosestColor(originalColor, colorGroupsColors, replacementStyle);
                                 pixelizer.PixCollection[i].ColorIndex = colorGroupsColors.IndexOf(adjustedColor);
@@ -150,23 +168,65 @@ namespace AngryKoala.Pixelization
 
                             float originalValue = originalColor.Value();
 
-                            if(useRamp)
+                            if (useRamp)
                             {
-                                adjustedColor = Color.HSVToRGB(hue, saturation, (20f / rampCount) * (Mathf.RoundToInt((originalValue * 20f) / (20f / rampCount))) / 20f);
+                                adjustedColor = Color.HSVToRGB(hue, saturation,
+                                    (20f / rampCount) * (Mathf.RoundToInt((originalValue * 20f) / (20f / rampCount))) /
+                                    20f);
                             }
                             else
                             {
                                 adjustedColor = Color.HSVToRGB(hue, saturation, originalValue);
                             }
 
-                            pixelizer.PixCollection[i].SetColor(adjustedColor);
+                            match = adjustedColor;
+                            pixelizer.PixCollection[i].SetColor(match);
                         }
-                        break;
+                            break;
+                    }
+
+                    DistributeDitherError(x, y, color, match, ref colorArray);
                 }
             }
 
             pixelizer.Texturizer.Texturize();
             OnColorize?.Invoke();
+        }
+
+        /*
+            "name": "FloydSteinberg",
+            "divider":16,
+            "size": 3,
+            "values": [
+                      7,
+                3, 5, 1
+            ]
+         */
+
+        private void DistributeDitherError(int x, int y, Color color, Color match, ref Vector3[] colorArray)
+        {
+            //Floyd Steinberg Dirty Implementation
+            Vector3 error = ColorOp.Subtract(color, match);
+
+            float[] values = new [] { 7f / 16f, 3f / 16f, 5f / 16f, 1f / 16f };
+            int sizeHalf = 1;
+            int lenHalf = 3 * 3 / 2 + 1;
+            
+            for(int v = 0; v < values.Length; v++) {
+                int shifted = v + lenHalf;
+        
+                int i = shifted % 3;
+                int j = (shifted - i) / 3;
+        
+                int px = x + i - sizeHalf;
+                int py = y + j - sizeHalf;
+                
+                if(px >= 0 && py >= 0 && px < pixelizer.CurrentWidth && py < pixelizer.CurrentHeight) {
+                    Vector3 neighbour = colorArray[py * pixelizer.CurrentWidth + px];
+                    Vector3 ex = error * values[v];
+                    colorArray[py * pixelizer.CurrentWidth + px] = ColorOp.Add(neighbour, ex);
+                }
+            }
         }
 
         private Color GetClosestColor(Color color, List<Color> colorizerColors, ReplacementStyle replacementStyle)

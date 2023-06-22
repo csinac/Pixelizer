@@ -160,6 +160,8 @@ namespace AngryKoala.Pixelization
             performantPix.MeshRenderer.enabled = usePerformanceMode && performanceMode == PerformanceMode.Level2;
         }
 
+        public Pix GetPixel(int x, int y) => pixCollection[y * currentWidth + x];
+
         private void SetPixColors()
         {
             float textureAreaX = (float)texture.width / width;
