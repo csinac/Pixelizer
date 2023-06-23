@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 895fc94d95bd89145bbd0eb6707ac53e, type: 3}
+  m_Name: ColorPalette_Triumph
+  m_EditorClassIdentifier: 
+  colors:
+  - {r: 0.18431373, g: 0.1254902, b: 0.34901962, a: 0}
+  - {r: 0.5529412, g: 0.105882354, b: 0.34509805, a: 0}
+  - {r: 0.7764706, g: 0.22352941, b: 0.22352941, a: 0}
+  - {r: 0.9254902, g: 0.50980395, b: 0.12941177, a: 0}
+  - {r: 0.9607843, g: 0.7294118, b: 0.078431375, a: 0}
