@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 895fc94d95bd89145bbd0eb6707ac53e, type: 3}
+  m_Name: ColorPalette_HeavenlySummer
+  m_EditorClassIdentifier: 
+  colors:
+  - {r: 0.9882353, g: 0.52156866, b: 0.52156866, a: 0}
+  - {r: 1, g: 0.78431374, b: 0.42745098, a: 0}
+  - {r: 0.9843137, g: 0.85882354, b: 0.63529414, a: 0}
+  - {r: 0.9647059, g: 0.91764706, b: 0.85882354, a: 0}
+  - {r: 0.52156866, g: 0.79607844, b: 0.8509804, a: 0}

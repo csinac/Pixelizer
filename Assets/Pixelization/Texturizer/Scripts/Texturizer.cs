@@ -35,7 +35,7 @@ namespace AngryKoala.Pixelization
 
             if(texturizationStyle == TexturizationStyle.PixSize)
             {
-                newTexture = new Texture2D(pixelizer.CurrentWidth * pixSize, pixelizer.CurrentHeight * pixSize, TextureFormat.RGBA32, false);
+                newTexture = new Texture2D(pixelizer.CurrentWidth * pixSize, pixelizer.CurrentHeight * pixSize, TextureFormat.RGB24, false);
 
                 int pixIndex = 0;
 
@@ -57,7 +57,7 @@ namespace AngryKoala.Pixelization
             }
             if(texturizationStyle == TexturizationStyle.CustomSize)
             {
-                newTexture = new Texture2D(pixelizer.CurrentWidth, pixelizer.CurrentHeight, TextureFormat.RGBA32, false);
+                newTexture = new Texture2D(pixelizer.CurrentWidth, pixelizer.CurrentHeight, TextureFormat.RGB24, false);
 
                 int pixIndex = 0;
 
@@ -77,7 +77,7 @@ namespace AngryKoala.Pixelization
                     }
                 }
 
-                Texture2D scaledTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+                Texture2D scaledTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
                 newTexture.wrapMode = TextureWrapMode.Clamp;
 
                 for(int i = 0; i < width; i++)
